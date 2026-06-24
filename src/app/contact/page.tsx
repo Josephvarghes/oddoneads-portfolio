@@ -292,6 +292,31 @@ function ContactPlannerForm({
     setIsSubmitting(true);
     // Simulate API request call
     setTimeout(() => {
+      // Save booking details to localStorage before showing success
+      if (typeof window !== "undefined") {
+        const newBooking = {
+          id: `book-${Date.now()}`,
+          fullName,
+          email,
+          phone,
+          weddingDate,
+          weddingVenue,
+          hasEngagement,
+          engagementDate: hasEngagement ? engagementDate : "",
+          engagementVenue: hasEngagement ? engagementVenue : "",
+          category,
+          events,
+          preWedding,
+          deliverables,
+          additionalServices,
+          totalPrice: calculateTotal(),
+          createdAt: new Date().toISOString()
+        };
+        const existing = localStorage.getItem("oddone_bookings");
+        const list = existing ? JSON.parse(existing) : [];
+        list.push(newBooking);
+        localStorage.setItem("oddone_bookings", JSON.stringify(list));
+      }
       setIsSubmitting(false);
       setShowSuccess(true);
     }, 1800);

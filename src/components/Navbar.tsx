@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
@@ -94,6 +94,14 @@ export default function Navbar() {
             >
               Book Your Date
             </Link>
+
+            <Link
+              href="/admin"
+              className="p-2 text-charcoal-400 hover:text-brand-purple transition-colors duration-300 flex items-center justify-center"
+              title="Staff Admin Portal"
+            >
+              <Lock size={14} />
+            </Link>
           </nav>
 
           {/* Mobile Menu Trigger */}
@@ -173,6 +181,15 @@ export default function Navbar() {
                 className="mt-8 mx-auto px-8 py-3 text-xs uppercase tracking-widest font-semibold border border-brand-teal text-brand-teal hover:bg-brand-gradient hover:text-charcoal-950 transition-all duration-300 w-full max-w-[280px]"
               >
                 Book Your Date
+              </Link>
+
+              <Link
+                href="/admin"
+                onClick={() => setIsOpen(false)}
+                className="mt-4 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest text-charcoal-500 hover:text-brand-purple py-2 transition-colors font-sans"
+              >
+                <Lock size={12} />
+                Staff Admin Portal
               </Link>
             </nav>
           </motion.div>
