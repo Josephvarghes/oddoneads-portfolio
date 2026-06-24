@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Film, Heart, Compass, Briefcase, ArrowRight, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Camera, Film, Heart, Compass, Briefcase, ArrowRight, ChevronLeft, ChevronRight, Star, Sparkles } from "lucide-react";
 import { SERVICES, PORTFOLIO_ITEMS, TESTIMONIALS } from "@/data/mockData";
 
 // Dynamic icon resolver
@@ -16,8 +16,77 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Briefcase: Briefcase,
 };
 
+// Interactive Vibes data
+interface Vibe {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  category: "pre-wedding" | "destination" | "weddings" | "corporate";
+  colorClass: string;
+  glowColor: string;
+  gradient: string;
+  keywords: string[];
+}
+
+const VIBES: Vibe[] = [
+  {
+    id: "ethereal-dreamer",
+    name: "Ethereal Dreamer",
+    tagline: "Whimsical & Airy Canvas",
+    description: "Soft lighting, breezy natural landscapes, and glowing shorelines. Perfect for couples who seek a romantic, light-filled, and whimsical visual keeping.",
+    category: "pre-wedding",
+    colorClass: "text-brand-teal",
+    glowColor: "from-brand-teal/20 via-brand-purple/10 to-transparent",
+    gradient: "from-brand-teal to-brand-purple",
+    keywords: ["Airy Light", "Coastal Breeze", "Raw Chemistry", "Natural Landscapes"]
+  },
+  {
+    id: "cinematic-luxury",
+    name: "Cinematic Luxury",
+    tagline: "Dramatic & Motion-Picture Scales",
+    description: "Grand heritage architecture, majestic destination venues, high contrast night captures, and complex motion-picture grade scales.",
+    category: "destination",
+    colorClass: "text-brand-purple",
+    glowColor: "from-brand-purple/20 via-brand-pink/10 to-transparent",
+    gradient: "from-brand-purple to-brand-pink",
+    keywords: ["Grand Scale", "Dramatic Contrast", "Royal Heritage", "Slow Motion"]
+  },
+  {
+    id: "raw-storyteller",
+    name: "Raw Storyteller",
+    tagline: "Intimate & Candid Realism",
+    description: "Unscripted expressions, soft golden-hour rays, teary-eyed family hugs, and real, heart-warming laughter recorded as it unfolds.",
+    category: "weddings",
+    colorClass: "text-brand-peach",
+    glowColor: "from-brand-peach/20 via-brand-pink/10 to-transparent",
+    gradient: "from-brand-peach to-brand-pink",
+    keywords: ["Candid Tears", "Golden Hour", "Family Hugs", "Unposed Love"]
+  },
+  {
+    id: "modern-editorial",
+    name: "Modern Editorial",
+    tagline: "High-Fashion & Framed Arts",
+    description: "High-fashion style grids, neat geometric compositions, bold layouts, and creative studio styling inspired by luxury editorial magazines.",
+    category: "corporate",
+    colorClass: "text-brand-pink",
+    glowColor: "from-brand-pink/20 via-brand-teal/10 to-transparent",
+    gradient: "from-brand-pink to-brand-teal",
+    keywords: ["Editorial Grid", "Artistic Framing", "High-Fashion", "Clean Lines"]
+  }
+];
+
 export default function Home() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [selectedVibe, setSelectedVibe] = useState<string>("ethereal-dreamer");
+
+  // Get current active vibe details
+  const activeVibe = VIBES.find((v) => v.id === selectedVibe) || VIBES[0];
+
+  // Get portfolio items for active vibe
+  const activeVibePortfolio = PORTFOLIO_ITEMS.filter(
+    (item) => item.category === activeVibe.category
+  ).slice(0, 3);
 
   // Testimonials auto-slide
   useEffect(() => {
@@ -36,7 +105,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden bg-charcoal-950">
       {/* 1. HERO SECTION */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
         {/* Background Image with Ken Burns Zoom Effect */}
@@ -53,7 +122,7 @@ export default function Home() {
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center opacity-45 grayscale-[20%] brightness-[40%]"
+              className="object-cover object-center opacity-40 grayscale-[15%] brightness-[35%]"
             />
           </motion.div>
           {/* Ambient Video Overlay Gradient */}
@@ -69,8 +138,8 @@ export default function Home() {
             transition={{ duration: 1, delay: 0.2 }}
             className="mb-4"
           >
-            <span className="text-[10px] md:text-xs tracking-[0.5em] text-gold-500 uppercase font-semibold">
-              FILMBY ODD_ONE_ADS
+            <span className="text-[10px] md:text-xs tracking-[0.5em] text-brand-teal uppercase font-semibold">
+              STORIES FROM ODD_ONE_ADS
             </span>
           </motion.div>
 
@@ -81,7 +150,7 @@ export default function Home() {
             className="font-serif text-4xl md:text-7xl lg:text-8xl font-bold text-white tracking-wide leading-tight mb-6"
           >
             Unwrap the tale of <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-200 via-gold-400 to-gold-champagne font-serif italic">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-teal via-brand-purple to-brand-pink font-serif italic">
               your perfect day
             </span>
           </motion.h1>
@@ -103,13 +172,13 @@ export default function Home() {
           >
             <Link
               href="/portfolio"
-              className="px-8 py-4 bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-400 text-charcoal-950 text-xs uppercase tracking-widest font-semibold transition-all duration-300 shadow-lg shadow-gold-500/10 hover:shadow-gold-500/20 text-center"
+              className="px-8 py-4 bg-brand-gradient hover:opacity-90 text-charcoal-950 text-xs uppercase tracking-widest font-semibold transition-all duration-300 shadow-lg shadow-brand-purple/20 text-center"
             >
               View Portfolio
             </Link>
             <Link
               href="/contact"
-              className="px-8 py-4 border border-white/20 hover:border-gold-500 text-white hover:text-gold-500 text-xs uppercase tracking-widest font-semibold transition-all duration-300 backdrop-blur-sm text-center"
+              className="px-8 py-4 border border-white/20 hover:border-brand-teal text-white hover:text-brand-teal text-xs uppercase tracking-widest font-semibold transition-all duration-300 backdrop-blur-sm text-center"
             >
               Book Your Date
             </Link>
@@ -121,7 +190,7 @@ export default function Home() {
           <span className="text-[9px] uppercase tracking-[0.3em] text-charcoal-500">
             Scroll
           </span>
-          <div className="w-[18px] h-[30px] border border-charcoal-500 rounded-full flex justify-center p-1">
+          <div className="w-[18px] h-[30px] border border-charcoal-600 rounded-full flex justify-center p-1">
             <motion.div
               animate={{
                 y: [0, 10, 0],
@@ -131,18 +200,157 @@ export default function Home() {
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
-              className="w-1.5 h-1.5 bg-gold-500 rounded-full"
+              className="w-1.5 h-1.5 bg-brand-pink rounded-full"
             />
           </div>
         </div>
       </section>
 
-      {/* 2. FEATURED PORTFOLIO */}
+      {/* 2. INTERACTIVE VIBE CURATOR (USER HOOK) */}
+      <section className="py-24 bg-charcoal-950/60 relative overflow-hidden border-y border-brand-purple/10">
+        {/* Animated background glow that shifts depending on chosen vibe */}
+        <div className="absolute inset-0 pointer-events-none z-0 transition-all duration-1000">
+          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[50vh] rounded-full bg-gradient-to-tr ${activeVibe.glowColor} blur-[120px] opacity-40 transition-all duration-1000`} />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
+              Interactive Storyteller
+            </span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide mb-6">
+              Curate Your Story Vibe
+            </h2>
+            <div className="w-12 h-[1.5px] bg-brand-gradient mx-auto mb-6" />
+            <p className="text-xs md:text-sm text-charcoal-400 font-light max-w-md mx-auto leading-relaxed">
+              Every couple is a distinct universe. Select a visual mood below to dynamically tailor the ambient layout, filter the portfolio grids, and match your unique aesthetic.
+            </p>
+          </div>
+
+          {/* Vibe Selection Tabs */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            {VIBES.map((vibe) => {
+              const isActive = selectedVibe === vibe.id;
+              return (
+                <button
+                  key={vibe.id}
+                  onClick={() => setSelectedVibe(vibe.id)}
+                  className={`relative p-6 flex flex-col items-start text-left rounded-xl transition-all duration-500 cursor-pointer border ${
+                    isActive
+                      ? "bg-charcoal-900 border-brand-purple shadow-lg shadow-brand-purple/5"
+                      : "bg-charcoal-950/40 border-white/[0.05] hover:border-white/15"
+                  }`}
+                >
+                  {/* Subtle hover splash effect */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="vibeTabBg"
+                      className="absolute inset-0 rounded-xl bg-gradient-to-tr from-brand-purple/5 via-brand-pink/5 to-transparent -z-10"
+                    />
+                  )}
+                  <span className={`text-[10px] uppercase tracking-widest font-semibold mb-2 ${vibe.colorClass}`}>
+                    {vibe.tagline.split(" & ")[0]}
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-white mb-2">
+                    {vibe.name}
+                  </h3>
+                  <p className="text-[11px] text-charcoal-400 leading-relaxed font-light mt-1">
+                    {vibe.tagline.split(" & ")[1] || vibe.tagline}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Dynamic Vibe Dashboard */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedVibe}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="glass p-8 rounded-2xl border border-white/[0.05] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+            >
+              {/* Left descriptions and CTAs */}
+              <div className="lg:col-span-5 space-y-6">
+                <div className="flex items-center gap-2 text-brand-teal">
+                  <Sparkles size={16} />
+                  <span className="text-[10px] uppercase tracking-widest font-bold">
+                    Aesthetic Match
+                  </span>
+                </div>
+                <h3 className="font-serif text-2xl md:text-3xl font-bold text-white">
+                  The {activeVibe.name} Vibe
+                </h3>
+                <p className="text-xs md:text-sm text-charcoal-300 leading-relaxed font-light">
+                  {activeVibe.description}
+                </p>
+
+                {/* Keywords caps */}
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {activeVibe.keywords.map((kw, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 text-[9px] uppercase tracking-widest bg-charcoal-900 border border-white/[0.08] text-white rounded-full font-medium"
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="pt-4 flex flex-col sm:flex-row gap-4">
+                  <Link
+                    href={`/contact?vibe=${activeVibe.id}`}
+                    className={`px-6 py-3 text-xs uppercase tracking-widest font-bold text-charcoal-950 bg-gradient-to-r ${activeVibe.gradient} text-center shadow-lg transition-transform duration-300 hover:scale-[1.02]`}
+                  >
+                    Check Vibe Date
+                  </Link>
+                  <Link
+                    href="/portfolio"
+                    className="px-6 py-3 text-xs uppercase tracking-widest font-semibold border border-white/10 hover:border-white/30 text-white text-center transition-colors duration-300"
+                  >
+                    Explore Category
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right Vibe Portfolio Gallery Previews */}
+              <div className="lg:col-span-7 grid grid-cols-3 gap-3">
+                {activeVibePortfolio.map((item) => (
+                  <div
+                    key={item.id}
+                    className="relative aspect-[3/4] overflow-hidden rounded-lg group bg-charcoal-900 border border-white/[0.04]"
+                  >
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 1024px) 30vw, 20vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                      <span className="text-[8px] text-brand-teal uppercase tracking-widest font-semibold">
+                        {item.location.split(",").slice(-1)[0]}
+                      </span>
+                      <h4 className="text-[10px] font-bold text-white uppercase tracking-wider truncate">
+                        {item.title}
+                      </h4>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* 3. FEATURED PORTFOLIO */}
       <section className="py-24 bg-charcoal-950">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
             <div>
-              <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+              <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
                 Curated Moments
               </span>
               <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide">
@@ -151,7 +359,7 @@ export default function Home() {
             </div>
             <Link
               href="/portfolio"
-              className="group flex items-center gap-2 text-xs uppercase tracking-widest text-gold-500 hover:text-white transition-colors duration-300 mt-4 md:mt-0 font-semibold"
+              className="group flex items-center gap-2 text-xs uppercase tracking-widest text-brand-teal hover:text-brand-pink transition-colors duration-300 mt-4 md:mt-0 font-semibold"
             >
               View Full Gallery <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -166,7 +374,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, delay: idx * 0.1 }}
-                className={`group relative overflow-hidden aspect-[4/5] bg-charcoal-900 cursor-pointer ${
+                className={`group relative overflow-hidden aspect-[4/5] bg-charcoal-900 cursor-pointer border border-white/[0.04] ${
                   idx === 1 || idx === 6 ? "lg:col-span-2 lg:aspect-auto lg:h-[450px]" : ""
                 }`}
               >
@@ -179,7 +387,7 @@ export default function Home() {
                 />
                 {/* Overlay details */}
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                  <span className="text-[9px] uppercase tracking-widest text-gold-500 font-semibold mb-1">
+                  <span className="text-[9px] uppercase tracking-widest text-brand-teal font-semibold mb-1">
                     {item.location}
                   </span>
                   <h3 className="font-serif text-lg font-medium text-white">
@@ -195,17 +403,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. SERVICES SECTION */}
-      <section className="py-24 bg-charcoal-900/40 border-y border-white/[0.03]">
+      {/* 4. SERVICES SECTION */}
+      <section className="py-24 bg-charcoal-900/20 border-y border-white/[0.03]">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="text-center max-w-3xl mx-auto mb-20">
-            <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+            <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
               Crafting Legacies
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide mb-6">
               Our Creative Services
             </h2>
-            <div className="w-12 h-[1px] bg-gold-500/50 mx-auto" />
+            <div className="w-12 h-[1px] bg-brand-purple/50 mx-auto" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -218,13 +426,13 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: idx * 0.1 }}
-                  className="glass-card p-8 flex flex-col justify-between h-[300px] group"
+                  className="glass-card p-8 flex flex-col justify-between h-[310px] group border border-white/[0.04]"
                 >
                   <div>
-                    <div className="w-12 h-12 rounded-none bg-gold-500/5 flex items-center justify-center border border-gold-500/10 text-gold-500 mb-6 group-hover:bg-gold-500 group-hover:text-charcoal-950 transition-all duration-300">
+                    <div className="w-12 h-12 rounded-none bg-brand-teal/5 flex items-center justify-center border border-brand-teal/15 text-brand-teal mb-6 group-hover:bg-brand-gradient group-hover:text-charcoal-950 transition-all duration-500">
                       <IconComponent size={20} />
                     </div>
-                    <h3 className="font-serif text-xl font-medium mb-3 group-hover:text-gold-500 transition-colors">
+                    <h3 className="font-serif text-xl font-medium mb-3 group-hover:text-brand-purple transition-colors">
                       {service.title}
                     </h3>
                     <p className="text-xs text-charcoal-400 leading-relaxed font-light">
@@ -234,7 +442,7 @@ export default function Home() {
 
                   <Link
                     href={service.id === "films" ? "/films" : "/portfolio"}
-                    className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-gold-500 font-semibold group-hover:text-white transition-colors duration-300 mt-4"
+                    className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-brand-teal font-semibold group-hover:text-brand-pink transition-colors duration-300 mt-4"
                   >
                     {service.ctaText} <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
                   </Link>
@@ -245,12 +453,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. WHY CHOOSE US */}
+      {/* 5. WHY CHOOSE US */}
       <section className="py-24 bg-charcoal-950">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Block */}
           <div>
-            <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+            <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
               Beyond Borders
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide mb-6">
@@ -268,7 +476,7 @@ export default function Home() {
                 { title: "Experienced Global Team", desc: "Over a decade of shooting in extreme light conditions and diverse cultures." }
               ].map((point, idx) => (
                 <div key={idx} className="flex gap-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gold-500 mt-2 flex-shrink-0" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-brand-teal mt-2 flex-shrink-0" />
                   <div>
                     <h4 className="font-serif text-white font-medium text-sm mb-1">{point.title}</h4>
                     <p className="text-xs text-charcoal-400">{point.desc}</p>
@@ -291,9 +499,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="bg-charcoal-900/60 border border-white/[0.04] p-8 flex flex-col justify-center items-center text-center aspect-square"
+                className="bg-charcoal-900/40 border border-white/[0.04] p-8 flex flex-col justify-center items-center text-center aspect-square rounded-xl hover:border-brand-purple/20 transition-colors duration-500"
               >
-                <span className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-gold-500 mb-2">
+                <span className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-brand-pink mb-2">
                   {stat.num}
                 </span>
                 <span className="text-[10px] text-charcoal-400 uppercase tracking-widest font-medium">
@@ -305,10 +513,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. TESTIMONIALS CAROUSEL */}
-      <section className="py-24 bg-charcoal-900/20 border-t border-white/[0.03]">
+      {/* 6. TESTIMONIALS CAROUSEL */}
+      <section className="py-24 bg-charcoal-900/10 border-t border-white/[0.03]">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+          <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
             Words of Love
           </span>
           <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide mb-12">
@@ -326,20 +534,20 @@ export default function Home() {
                 className="flex flex-col items-center"
               >
                 {/* Stars */}
-                <div className="flex gap-1 mb-6 text-gold-500">
+                <div className="flex gap-1 mb-6 text-brand-pink">
                   {[...Array(TESTIMONIALS[currentTestimonial].rating)].map((_, i) => (
                     <Star key={i} size={14} fill="currentColor" />
                   ))}
                 </div>
 
                 {/* Quote */}
-                <p className="font-serif italic text-lg md:text-2xl text-charcoal-100 leading-relaxed mb-8 max-w-2xl">
+                <p className="font-serif italic text-lg md:text-2xl text-charcoal-200 leading-relaxed mb-8 max-w-2xl">
                   &ldquo;{TESTIMONIALS[currentTestimonial].quote}&rdquo;
                 </p>
 
                 {/* Profile */}
                 <div className="flex items-center gap-3">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden border border-gold-500/20">
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden border border-brand-purple/20">
                     <Image
                       src={TESTIMONIALS[currentTestimonial].imageUrl}
                       alt={TESTIMONIALS[currentTestimonial].name}
@@ -365,7 +573,7 @@ export default function Home() {
           <div className="flex justify-center items-center gap-4 mt-10">
             <button
               onClick={prevTestimonial}
-              className="p-2 border border-white/10 hover:border-gold-500 text-white hover:text-gold-500 transition-colors"
+              className="p-2 border border-white/10 hover:border-brand-purple text-white hover:text-brand-purple transition-colors cursor-pointer"
               aria-label="Previous testimonial"
             >
               <ChevronLeft size={16} />
@@ -375,8 +583,8 @@ export default function Home() {
                 <button
                   key={i}
                   onClick={() => setCurrentTestimonial(i)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all ${
-                    currentTestimonial === i ? "bg-gold-500 w-4" : "bg-charcoal-700"
+                  className={`w-1.5 h-1.5 rounded-full transition-all cursor-pointer ${
+                    currentTestimonial === i ? "bg-brand-purple w-4" : "bg-charcoal-700"
                   }`}
                   aria-label={`Go to testimonial ${i + 1}`}
                 />
@@ -384,7 +592,7 @@ export default function Home() {
             </div>
             <button
               onClick={nextTestimonial}
-              className="p-2 border border-white/10 hover:border-gold-500 text-white hover:text-gold-500 transition-colors"
+              className="p-2 border border-white/10 hover:border-brand-purple text-white hover:text-brand-purple transition-colors cursor-pointer"
               aria-label="Next testimonial"
             >
               <ChevronRight size={16} />
@@ -393,7 +601,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. CTA SECTION */}
+      {/* 7. CTA SECTION */}
       <section className="relative py-28 bg-charcoal-950 flex justify-center items-center text-center">
         {/* Background Image Overlay */}
         <div className="absolute inset-0 z-0">
@@ -402,13 +610,13 @@ export default function Home() {
             alt="CTA backdrop"
             fill
             sizes="100vw"
-            className="object-cover opacity-15 brightness-[30%]"
+            className="object-cover opacity-10 brightness-[25%]"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-charcoal-950 via-transparent to-charcoal-950" />
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto px-6">
-          <span className="text-[10px] tracking-[0.5em] text-gold-500 uppercase font-semibold block mb-4">
+          <span className="text-[10px] tracking-[0.5em] text-brand-teal uppercase font-semibold block mb-4">
             Begin Your Legacy
           </span>
           <h2 className="font-serif text-4xl md:text-6xl font-bold tracking-wide mb-6">
@@ -419,7 +627,7 @@ export default function Home() {
           </p>
           <Link
             href="/contact"
-            className="inline-block px-10 py-4 bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-400 text-charcoal-950 text-xs uppercase tracking-widest font-semibold transition-all duration-300 shadow-lg shadow-gold-500/10"
+            className="inline-block px-10 py-4 bg-brand-gradient hover:opacity-90 text-charcoal-950 text-xs uppercase tracking-widest font-semibold transition-all duration-300 shadow-lg shadow-brand-purple/20"
           >
             Book Consultation
           </Link>

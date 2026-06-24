@@ -26,7 +26,7 @@ export default function About() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+              <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
                 Our Origin
               </span>
               <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-wide mb-8">
@@ -41,7 +41,7 @@ export default function About() {
               className="space-y-6 text-sm text-charcoal-300 font-light leading-relaxed"
             >
               <p className="font-serif italic text-lg text-white/95 leading-relaxed">
-                FILMBY ODD_ONE_ADS is a premium creative studio dedicated to capturing genuine emotions and unforgettable moments through timeless photography and cinematic storytelling.
+                STORIES FROM ODD_ONE_ADS is a premium creative studio dedicated to capturing genuine emotions and unforgettable moments through timeless photography and cinematic storytelling.
               </p>
               <p>
                 Founded on the belief that every love story deserves to be recorded as a work of fine art, we have spent a decade traveling the globe to unwrap the tales of couples who share a passion for luxury, authenticity, and visual storytelling.
@@ -62,7 +62,7 @@ export default function About() {
                 const Icon = val.icon;
                 return (
                   <div key={idx} className="flex flex-col items-center text-center">
-                    <div className="w-10 h-10 rounded-full bg-gold-500/5 flex items-center justify-center text-gold-500 border border-gold-500/10 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-brand-teal/5 flex items-center justify-center text-brand-teal border border-brand-teal/15 mb-3">
                       <Icon size={16} />
                     </div>
                     <span className="text-[10px] uppercase tracking-widest text-charcoal-300 font-semibold">
@@ -95,13 +95,13 @@ export default function About() {
         {/* 2. TEAM SECTION */}
         <section className="mb-28">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+            <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
               The Creators
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide">
               Meet the Team
             </h2>
-            <div className="w-12 h-[1px] bg-gold-500/50 mx-auto mt-6" />
+            <div className="w-12 h-[1px] bg-brand-purple/55 mx-auto mt-6" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -112,9 +112,9 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="glass-card flex flex-col items-center text-center p-8 group border border-white/[0.03]"
+                className="glass-card flex flex-col items-center text-center p-8 group border border-white/[0.03] rounded-2xl"
               >
-                <div className="relative w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-gold-500/20 group-hover:border-gold-500 transition-colors duration-300">
+                <div className="relative w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-brand-purple/20 group-hover:border-brand-pink transition-colors duration-300">
                   <Image
                     src={member.imageUrl}
                     alt={member.name}
@@ -128,7 +128,7 @@ export default function About() {
                   {member.name}
                 </h3>
                 
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gold-500 font-semibold mb-4">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-brand-teal font-semibold mb-4">
                   {member.role}
                 </span>
 
@@ -143,13 +143,13 @@ export default function About() {
         {/* 3. BEHIND THE SCENES */}
         <section>
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+            <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
               Process & Gear
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide">
               Behind the Scenes
             </h2>
-            <div className="w-12 h-[1px] bg-gold-500/50 mx-auto mt-6" />
+            <div className="w-12 h-[1px] bg-brand-purple/55 mx-auto mt-6" />
           </div>
 
           {/* BTS Grid */}
@@ -161,7 +161,7 @@ export default function About() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="relative aspect-[4/3] overflow-hidden bg-charcoal-900 border border-white/[0.03] group"
+                className="relative aspect-[4/3] overflow-hidden bg-charcoal-900 border border-white/[0.03] group rounded-xl"
               >
                 <Image
                   src={url}
@@ -172,7 +172,7 @@ export default function About() {
                 />
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/40 transition-colors" />
                 <div className="absolute bottom-4 left-4 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Sparkles size={12} className="text-gold-500" />
+                  <Sparkles size={12} className="text-brand-pink" />
                   <span className="text-[9px] uppercase tracking-widest text-white font-semibold">
                     {idx === 0 ? "Production" : idx === 1 ? "Editing Suite" : "Rigging Setup"}
                   </span>

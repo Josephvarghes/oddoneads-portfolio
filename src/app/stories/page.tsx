@@ -24,7 +24,7 @@ export default function Stories() {
             >
               {/* Page Header */}
               <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+                <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
                   Journal
                 </span>
                 <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-wide mb-6">
@@ -51,7 +51,7 @@ export default function Stories() {
                       }`}
                     >
                       {/* Image Block */}
-                      <div className="w-full lg:w-1/2 aspect-[3/2] relative overflow-hidden bg-charcoal-900 group cursor-pointer border border-white/[0.04]" onClick={() => setSelectedStory(story)}>
+                      <div className="w-full lg:w-1/2 aspect-[3/2] relative overflow-hidden bg-charcoal-900 group cursor-pointer border border-white/[0.04] rounded-xl" onClick={() => setSelectedStory(story)}>
                         <Image
                           src={story.coverUrl}
                           alt={story.coupleName}
@@ -64,16 +64,16 @@ export default function Stories() {
 
                       {/* Text Block */}
                       <div className="w-full lg:w-1/2 flex flex-col items-start">
-                        <span className="text-[10px] tracking-widest text-gold-500 uppercase font-semibold mb-3 flex items-center gap-1.5">
+                        <span className="text-[10px] tracking-widest text-brand-pink uppercase font-semibold mb-3 flex items-center gap-1.5">
                           <Sparkles size={10} /> Case Study {idx + 1}
                         </span>
                         
-                        <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-wide text-white mb-4 leading-tight hover:text-gold-500 transition-colors cursor-pointer" onClick={() => setSelectedStory(story)}>
+                        <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-wide text-white mb-4 leading-tight hover:text-brand-purple transition-colors cursor-pointer" onClick={() => setSelectedStory(story)}>
                           {story.title}
                         </h2>
 
                         <p className="text-xs text-charcoal-400 tracking-wider uppercase mb-6 flex items-center gap-1">
-                          <MapPin size={10} className="text-gold-500" /> {story.coupleName} &bull; {story.storyDescription.split(",").slice(-1)[0]}
+                          <MapPin size={10} className="text-brand-teal" /> {story.coupleName} &bull; {story.storyDescription.split(",").slice(-1)[0]}
                         </p>
 
                         <p className="text-sm text-charcoal-300 font-light leading-relaxed mb-8 max-w-lg">
@@ -82,7 +82,7 @@ export default function Stories() {
 
                         <button
                           onClick={() => setSelectedStory(story)}
-                          className="group flex items-center gap-2 text-xs uppercase tracking-widest text-gold-500 hover:text-white transition-colors duration-300 font-semibold cursor-pointer"
+                          className="group flex items-center gap-2 text-xs uppercase tracking-widest text-brand-teal hover:text-brand-pink transition-colors duration-300 font-semibold cursor-pointer"
                         >
                           Read Editorial Story <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </button>
@@ -105,27 +105,27 @@ export default function Stories() {
               {/* Back Button */}
               <button
                 onClick={() => setSelectedStory(null)}
-                className="group flex items-center gap-2 text-xs uppercase tracking-widest text-gold-500 hover:text-white transition-colors mb-12 cursor-pointer font-semibold"
+                className="group flex items-center gap-2 text-xs uppercase tracking-widest text-brand-teal hover:text-brand-pink transition-colors mb-12 cursor-pointer font-semibold"
               >
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Journal
               </button>
 
               {/* Editorial Header */}
               <div className="text-center mb-12">
-                <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
-                  FILMBY ODD_ONE_ADS
+                <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
+                  STORIES FROM ODD_ONE_ADS
                 </span>
                 <h1 className="font-serif text-3xl md:text-6xl font-bold tracking-wide text-white leading-tight max-w-3xl mx-auto mb-6">
                   {selectedStory.title}
                 </h1>
-                <div className="w-12 h-[1px] bg-gold-500/50 mx-auto mb-6" />
+                <div className="w-12 h-[1px] bg-brand-purple/55 mx-auto mb-6" />
                 <p className="font-serif italic text-lg text-charcoal-300 max-w-xl mx-auto">
                   &ldquo;{selectedStory.heroText}&rdquo;
                 </p>
               </div>
 
               {/* Big Featured Image */}
-              <div className="relative aspect-[16/9] w-full mb-16 overflow-hidden border border-white/[0.04]">
+              <div className="relative aspect-[16/9] w-full mb-16 overflow-hidden border border-white/[0.04] rounded-2xl">
                 <Image
                   src={selectedStory.coverUrl}
                   alt={selectedStory.coupleName}
@@ -139,7 +139,7 @@ export default function Stories() {
               {/* Editorial Body (Multi-column) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-16 text-charcoal-200 text-sm leading-relaxed font-light font-sans">
                 {selectedStory.narrative.map((para, i) => (
-                  <p key={i} className={i === 0 ? "first-letter:text-5xl first-letter:font-serif first-letter:float-left first-letter:mr-3 first-letter:text-gold-500 first-letter:font-bold" : ""}>
+                  <p key={i} className={i === 0 ? "first-letter:text-5xl first-letter:font-serif first-letter:float-left first-letter:mr-3 first-letter:text-brand-pink first-letter:font-bold" : ""}>
                     {para}
                   </p>
                 ))}
@@ -150,7 +150,7 @@ export default function Stories() {
                 {selectedStory.gallery.map((imgUrl, idx) => (
                   <div
                     key={idx}
-                    className={`relative aspect-[3/4] overflow-hidden bg-charcoal-900 border border-white/[0.03] ${
+                    className={`relative aspect-[3/4] overflow-hidden bg-charcoal-900 border border-white/[0.03] rounded-xl ${
                       idx === 1 ? "sm:-translate-y-4" : ""
                     }`}
                   >
@@ -167,7 +167,7 @@ export default function Stories() {
 
               {/* Film Embed Heading */}
               <div className="text-center mb-8">
-                <span className="text-[10px] tracking-widest text-gold-500 uppercase font-semibold block mb-2">
+                <span className="text-[10px] tracking-widest text-brand-teal uppercase font-semibold block mb-2">
                   The Film
                 </span>
                 <h3 className="font-serif text-2xl font-bold text-white">
@@ -176,7 +176,7 @@ export default function Stories() {
               </div>
 
               {/* Centered Video Embed */}
-              <div className="relative aspect-[16/9] w-full bg-black mb-20 border border-white/10 shadow-2xl">
+              <div className="relative aspect-[16/9] w-full bg-black mb-20 border border-white/10 shadow-2xl rounded-2xl overflow-hidden">
                 <iframe
                   src={selectedStory.filmEmbedUrl}
                   title={`${selectedStory.coupleName} Film`}
@@ -193,7 +193,7 @@ export default function Stories() {
                     setSelectedStory(null);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
-                  className="group px-8 py-3 border border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-charcoal-950 transition-all font-semibold uppercase tracking-widest text-xs cursor-pointer rounded-none"
+                  className="group px-8 py-3 border border-brand-teal text-brand-teal hover:bg-brand-gradient hover:text-charcoal-950 hover:border-transparent transition-all font-semibold uppercase tracking-widest text-xs cursor-pointer rounded-none"
                 >
                   Return to Journal
                 </button>

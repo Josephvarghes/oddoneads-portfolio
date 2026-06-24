@@ -55,7 +55,7 @@ export default function Portfolio() {
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-[10px] tracking-[0.4em] text-gold-500 uppercase font-semibold block mb-3">
+          <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
             Portfolio
           </span>
           <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-wide mb-6">
@@ -73,14 +73,14 @@ export default function Portfolio() {
               key={category}
               onClick={() => setActiveCategory(category)}
               className={`px-4 py-2 text-[10px] md:text-xs uppercase tracking-widest font-semibold cursor-pointer transition-all duration-300 relative ${
-                activeCategory === category ? "text-gold-500" : "text-charcoal-400 hover:text-white"
+                activeCategory === category ? "text-brand-teal" : "text-charcoal-400 hover:text-white"
               }`}
             >
               {category.replace("-", " ")}
               {activeCategory === category && (
                 <motion.span
                   layoutId="activeFilterIndicator"
-                  className="absolute bottom-0 left-4 right-4 h-[1px] bg-gold-500"
+                  className="absolute bottom-0 left-4 right-4 h-[1px] bg-gradient-to-r from-brand-teal to-brand-pink"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}
@@ -103,7 +103,7 @@ export default function Portfolio() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
                 onClick={() => setLightboxIndex(idx)}
-                className="group relative overflow-hidden bg-charcoal-900 cursor-pointer border border-white/[0.03] aspect-[3/4]"
+                className="group relative overflow-hidden bg-charcoal-900 cursor-pointer border border-white/[0.03] aspect-[3/4] rounded-xl"
               >
                 <Image
                   src={item.imageUrl}
@@ -114,8 +114,8 @@ export default function Portfolio() {
                 />
                 
                 {/* Visual hover reveal */}
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                  <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-widest text-gold-500 font-semibold mb-1">
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                  <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-widest text-brand-teal font-semibold mb-1">
                     <MapPin size={10} /> {item.location}
                   </span>
                   <h3 className="font-serif text-lg font-medium text-white mb-0.5">
@@ -146,19 +146,19 @@ export default function Portfolio() {
             className="fixed inset-0 z-50 bg-charcoal-950/98 backdrop-blur-md flex flex-col justify-between p-6"
           >
             {/* Top Toolbar */}
-            <div className="flex justify-between items-center w-full max-w-7xl mx-auto z-10">
+            <div className="flex justify-between items-center w-full max-w-7xl mx-auto z-10 animate-fade-in">
               <div>
                 <h3 className="font-serif text-lg text-white">
                   {filteredItems[lightboxIndex].title}
                 </h3>
-                <p className="text-[10px] text-gold-500 uppercase tracking-widest flex items-center gap-1">
+                <p className="text-[10px] text-brand-teal uppercase tracking-widest flex items-center gap-1">
                   <MapPin size={10} /> {filteredItems[lightboxIndex].location}
                 </p>
               </div>
               
               <button
                 onClick={handleClose}
-                className="w-10 h-10 border border-white/10 hover:border-gold-500 text-white hover:text-gold-500 flex items-center justify-center transition-colors cursor-pointer rounded-none"
+                className="w-10 h-10 border border-white/10 hover:border-brand-pink text-white hover:text-brand-pink flex items-center justify-center transition-colors cursor-pointer rounded-none"
                 aria-label="Close Lightbox"
               >
                 <X size={20} />
@@ -170,7 +170,7 @@ export default function Portfolio() {
               {/* Navigation Left */}
               <button
                 onClick={handlePrev}
-                className="absolute left-0 z-10 w-12 h-12 border border-white/10 hover:border-gold-500 text-white hover:text-gold-500 flex items-center justify-center transition-colors cursor-pointer bg-charcoal-950/50 backdrop-blur-sm"
+                className="absolute left-0 z-10 w-12 h-12 border border-white/10 hover:border-brand-pink text-white hover:text-brand-pink flex items-center justify-center transition-colors cursor-pointer bg-charcoal-950/50 backdrop-blur-sm"
                 aria-label="Previous Image"
               >
                 <ChevronLeft size={24} />
@@ -202,7 +202,7 @@ export default function Portfolio() {
               {/* Navigation Right */}
               <button
                 onClick={handleNext}
-                className="absolute right-0 z-10 w-12 h-12 border border-white/10 hover:border-gold-500 text-white hover:text-gold-500 flex items-center justify-center transition-colors cursor-pointer bg-charcoal-950/50 backdrop-blur-sm"
+                className="absolute right-0 z-10 w-12 h-12 border border-white/10 hover:border-brand-pink text-white hover:text-brand-pink flex items-center justify-center transition-colors cursor-pointer bg-charcoal-950/50 backdrop-blur-sm"
                 aria-label="Next Image"
               >
                 <ChevronRight size={24} />

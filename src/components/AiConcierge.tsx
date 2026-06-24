@@ -74,7 +74,7 @@ export default function AiConcierge() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-gradient-to-tr from-gold-600 to-gold-400 hover:from-gold-500 hover:to-gold-300 text-charcoal-950 rounded-full flex items-center justify-center shadow-lg shadow-gold-500/10 cursor-pointer border border-white/10"
+        className="w-14 h-14 bg-brand-gradient hover:opacity-95 text-charcoal-950 rounded-full flex items-center justify-center shadow-lg shadow-brand-purple/20 cursor-pointer border border-white/10"
         aria-label="Open AI Concierge"
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
@@ -88,19 +88,19 @@ export default function AiConcierge() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="absolute bottom-20 right-0 w-[90vw] sm:w-[400px] h-[550px] glass-premium rounded-2xl flex flex-col overflow-hidden shadow-2xl shadow-black/40 border border-gold-500/20"
+            className="absolute bottom-20 right-0 w-[90vw] sm:w-[400px] h-[550px] glass-premium rounded-2xl flex flex-col overflow-hidden shadow-2xl shadow-black/40 border border-brand-purple/25"
           >
             {/* Header */}
             <div className="bg-charcoal-900 border-b border-white/[0.06] p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-500">
+                <div className="w-8 h-8 rounded-full bg-brand-purple/10 border border-brand-purple/30 flex items-center justify-center text-brand-purple">
                   <Sparkles size={16} />
                 </div>
                 <div>
                   <h4 className="font-serif text-sm font-semibold tracking-wider text-white">
                     ODD ONE ADS CONCIERGE
                   </h4>
-                  <span className="text-[10px] text-gold-500 tracking-widest font-semibold flex items-center gap-1">
+                  <span className="text-[10px] text-brand-teal tracking-widest font-semibold flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                     ONLINE ASSISTANT
                   </span>
@@ -127,7 +127,7 @@ export default function AiConcierge() {
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] ${
                       msg.sender === "user"
                         ? "bg-charcoal-700 text-white"
-                        : "bg-gold-500/10 text-gold-500 border border-gold-500/20"
+                        : "bg-brand-teal/10 text-brand-teal border border-brand-teal/20"
                     }`}
                   >
                     {msg.sender === "user" ? <User size={12} /> : <Sparkles size={12} />}
@@ -135,7 +135,7 @@ export default function AiConcierge() {
                   <div
                     className={`max-w-[75%] rounded-2xl p-3 text-xs leading-relaxed ${
                       msg.sender === "user"
-                        ? "bg-gold-500 text-charcoal-950 font-medium"
+                        ? "bg-brand-gradient text-charcoal-950 font-semibold"
                         : "bg-white/[0.04] text-charcoal-100 border border-white/[0.06]"
                     }`}
                   >
@@ -150,7 +150,7 @@ export default function AiConcierge() {
 
               {isTyping && (
                 <div className="flex items-start gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-gold-500/10 text-gold-500 border border-gold-500/20 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-full bg-brand-teal/10 text-brand-teal border border-brand-teal/20 flex items-center justify-center">
                     <Sparkles size={12} />
                   </div>
                   <div className="bg-white/[0.04] text-charcoal-100 border border-white/[0.06] rounded-2xl px-4 py-3 text-xs flex items-center gap-1">
@@ -167,14 +167,14 @@ export default function AiConcierge() {
             {/* Quick Actions Panel */}
             <div className="px-4 py-2 border-t border-white/[0.03] bg-charcoal-900/40">
               <span className="text-[10px] text-charcoal-500 uppercase tracking-widest font-semibold flex items-center gap-1.5 mb-2">
-                <HelpCircle size={10} className="text-gold-500" /> Suggested Questions
+                <HelpCircle size={10} className="text-brand-purple" /> Suggested Questions
               </span>
               <div className="flex flex-wrap gap-2">
                 {CHAT_BOT_QA.predefinedQuestions.map((qa) => (
                   <button
                     key={qa.id}
                     onClick={() => handleSendMessage(qa.question)}
-                    className="text-[10px] text-charcoal-200 hover:text-white bg-white/[0.03] hover:bg-gold-500/10 border border-white/[0.06] hover:border-gold-500/30 rounded-full px-3 py-1.5 transition-all text-left duration-250 cursor-pointer"
+                    className="text-[10px] text-charcoal-200 hover:text-white bg-white/[0.03] hover:bg-brand-purple/10 border border-white/[0.06] hover:border-brand-purple/35 rounded-full px-3 py-1.5 transition-all text-left duration-250 cursor-pointer"
                   >
                     {qa.question}
                   </button>
@@ -195,12 +195,12 @@ export default function AiConcierge() {
                 placeholder="Ask about your big day..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                className="flex-grow bg-white/[0.03] border border-white/[0.08] focus:border-gold-500/50 rounded-xl px-4 py-2.5 text-xs text-white placeholder-charcoal-500 focus:outline-none transition-all"
+                className="flex-grow bg-white/[0.03] border border-white/[0.08] focus:border-brand-purple/50 rounded-xl px-4 py-2.5 text-xs text-white placeholder-charcoal-500 focus:outline-none transition-all"
               />
               <button
                 type="submit"
                 disabled={!inputValue.trim()}
-                className="w-9 h-9 bg-gold-500 hover:bg-gold-400 disabled:opacity-40 disabled:hover:bg-gold-500 text-charcoal-950 rounded-xl flex items-center justify-center transition-all cursor-pointer flex-shrink-0"
+                className="w-9 h-9 bg-brand-gradient hover:opacity-95 disabled:opacity-40 text-charcoal-950 rounded-xl flex items-center justify-center transition-all cursor-pointer flex-shrink-0"
               >
                 <Send size={14} />
               </button>

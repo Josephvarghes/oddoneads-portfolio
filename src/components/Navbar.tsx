@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,19 +40,30 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? "bg-charcoal-950/80 backdrop-blur-md border-b border-white/[0.06] py-4 shadow-lg shadow-black/10"
+            ? "bg-charcoal-950/85 backdrop-blur-md border-b border-brand-purple/15 py-4 shadow-lg shadow-black/20"
             : "bg-transparent py-6"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo / Brand Name */}
-          <Link href="/" className="group flex flex-col">
-            <span className="font-serif text-lg md:text-xl font-bold tracking-[0.25em] text-white transition-colors duration-300 group-hover:text-gold-500">
-              FILMBY
-            </span>
-            <span className="font-sans text-[9px] tracking-[0.4em] text-gold-500/80 -mt-1 font-semibold uppercase group-hover:text-white transition-colors duration-300">
-              ODD_ONE_ADS
-            </span>
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="relative w-10 h-10 md:w-11 md:h-11 overflow-hidden rounded-full border border-white/10 shadow-md transition-all duration-500 group-hover:scale-105 group-hover:border-brand-purple/40">
+              <Image
+                src="/logo.jpg"
+                alt="Odd One Ads Logo"
+                fill
+                sizes="(max-width: 768px) 40px, 44px"
+                className="object-cover scale-110"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif text-sm md:text-base font-bold tracking-[0.25em] text-white transition-colors duration-300 group-hover:text-brand-purple">
+                ODD_ONE_ADS
+              </span>
+              <span className="font-sans text-[8px] tracking-[0.3em] text-brand-teal -mt-1 font-semibold uppercase group-hover:text-brand-pink transition-colors duration-300">
+                PHOTOGRAPHY & WEDDING FILM
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -62,13 +74,13 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative py-2 text-xs uppercase tracking-widest text-charcoal-200 hover:text-white transition-colors duration-300 font-medium"
+                  className="relative py-2 text-xs uppercase tracking-widest text-charcoal-300 hover:text-white transition-colors duration-300 font-medium"
                 >
                   {link.label}
                   {isActive && (
                     <motion.span
                       layoutId="activeNavIndicator"
-                      className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold-500"
+                      className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-brand-teal via-brand-purple to-brand-pink"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -78,7 +90,7 @@ export default function Navbar() {
             
             <Link
               href="/contact"
-              className="px-5 py-2 text-xs uppercase tracking-widest font-semibold border border-gold-500/50 text-gold-500 hover:bg-gold-500 hover:text-charcoal-950 rounded-none transition-all duration-300 backdrop-blur-sm"
+              className="px-5 py-2 text-xs uppercase tracking-widest font-semibold border border-brand-teal/40 text-brand-teal hover:bg-brand-gradient hover:text-charcoal-950 transition-all duration-500 backdrop-blur-sm hover:border-transparent shadow-lg shadow-brand-teal/5 hover:shadow-brand-pink/20"
             >
               Book Your Date
             </Link>
@@ -87,7 +99,7 @@ export default function Navbar() {
           {/* Mobile Menu Trigger */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white hover:text-gold-500 transition-colors p-2"
+            className="md:hidden text-white hover:text-brand-teal transition-colors p-2"
             aria-label="Toggle menu"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -103,27 +115,42 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed inset-0 z-40 bg-charcoal-950 flex flex-col justify-center px-8 md:hidden"
+            className="fixed inset-0 z-40 bg-charcoal-950 flex flex-col justify-center px-8 md:hidden relative overflow-hidden"
           >
+            {/* Ambient Background Glow in mobile drawer */}
+            <div className="absolute -top-[10%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-brand-pink/10 blur-[80px]" />
+            <div className="absolute -bottom-[10%] -right-[10%] w-[60vw] h-[60vw] rounded-full bg-brand-teal/10 blur-[80px]" />
+
             {/* Header backdrop alignment */}
-            <div className="absolute top-6 left-6">
-              <span className="font-serif text-lg font-bold tracking-[0.25em] text-white">
-                FILMBY
-              </span>
-              <span className="block font-sans text-[9px] tracking-[0.4em] text-gold-500/80 -mt-1 font-semibold uppercase">
-                ODD_ONE_ADS
-              </span>
+            <div className="absolute top-6 left-6 flex items-center gap-3">
+              <div className="relative w-9 h-9 overflow-hidden rounded-full border border-white/10">
+                <Image
+                  src="/logo.jpg"
+                  alt="Odd One Ads Logo"
+                  fill
+                  sizes="36px"
+                  className="object-cover scale-110"
+                />
+              </div>
+              <div>
+                <span className="font-serif text-sm font-bold tracking-[0.25em] text-white block">
+                  ODD_ONE_ADS
+                </span>
+                <span className="font-sans text-[7px] tracking-[0.3em] text-brand-teal -mt-1 font-semibold uppercase block">
+                  PHOTOGRAPHY & WEDDING FILM
+                </span>
+              </div>
             </div>
 
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-6 right-6 text-white hover:text-gold-500 p-2"
+              className="absolute top-6 right-6 text-white hover:text-brand-pink p-2"
               aria-label="Close menu"
             >
               <X size={24} />
             </button>
 
-            <nav className="flex flex-col gap-6 text-center">
+            <nav className="flex flex-col gap-6 text-center z-10 relative">
               {NAV_LINKS.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -132,7 +159,7 @@ export default function Navbar() {
                     href={link.href}
                     onClick={() => setIsOpen(false)}
                     className={`text-xl font-serif tracking-widest ${
-                      isActive ? "text-gold-500" : "text-white hover:text-gold-400"
+                      isActive ? "text-brand-purple" : "text-white hover:text-brand-teal"
                     } transition-colors py-2`}
                   >
                     {link.label}
@@ -143,7 +170,7 @@ export default function Navbar() {
               <Link
                 href="/contact"
                 onClick={() => setIsOpen(false)}
-                className="mt-8 mx-auto px-8 py-3 text-xs uppercase tracking-widest font-semibold border border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-charcoal-950 transition-all duration-300 w-full max-w-[280px]"
+                className="mt-8 mx-auto px-8 py-3 text-xs uppercase tracking-widest font-semibold border border-brand-teal text-brand-teal hover:bg-brand-gradient hover:text-charcoal-950 transition-all duration-300 w-full max-w-[280px]"
               >
                 Book Your Date
               </Link>
