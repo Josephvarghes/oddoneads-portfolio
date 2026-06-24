@@ -289,9 +289,58 @@ export default function AdminPortal() {
 
   // Export spreadsheet as BOM-prefixed CSV (Excel readable)
   const handleExportCSV = () => {
-    let csvContent = "ID,Couple Name,Email,Phone,Category,Wedding Date,Wedding Venue,Engagement Date,Engagement Venue,Estimated Quote (INR),Created At\r\n";
+    let csvContent = "ID,Couple Name,Email,Phone,Category,Wedding Date,Wedding Venue,Engagement Date,Engagement Venue,Events Covered,Pre-Wedding Sessions,Deliverables,Additional Upgrades,Estimated Quote (INR),Created At\r\n";
     
     bookings.forEach((b) => {
+      // 1. Events Covered details compiler
+      const activeEvts: string[] = [];
+      Object.keys(b.events).forEach((key) => {
+        const s = b.events[key];
+        const items = [];
+        if (s.photo) items.push("Photo");
+        if (s.video) items.push("Video");
+        if (items.length > 0) {
+          activeEvts.push(`${EVENT_LABELS[key] || key} (${items.join(" & ")})`);
+        }
+      });
+      const eventsStr = activeEvts.join(" | ");
+
+      // 2. Pre-Wedding Sessions compiler
+      const activePreWeds = [];
+      if (b.preWedding.shoot1Photo) activePreWeds.push("Shoot 1 Photo");
+      if (b.preWedding.shoot1Video) activePreWeds.push("Shoot 1 Video");
+      if (b.preWedding.shoot2Photo) activePreWeds.push("Shoot 2 Photo");
+      if (b.preWedding.shoot2Video) activePreWeds.push("Shoot 2 Video");
+      const preWedsStr = activePreWeds.join(" | ");
+
+      // 3. Deliverables selections compiler
+      const activeDelivs: string[] = [];
+      const delivLabels: Record<string, string> = {
+        album1: "Premium Album 1",
+        album2: "Premium Album 2",
+        highlights1: "Highlights Film 1",
+        highlights2: "Highlights Film 2",
+        documentary: "Full Film",
+        reels: "Teaser Reels"
+      };
+      Object.keys(b.deliverables).forEach((k) => {
+        if (b.deliverables[k as keyof DeliverableSelection]) {
+          activeDelivs.push(delivLabels[k] || k);
+        }
+      });
+      const delivsStr = activeDelivs.join(" | ");
+
+      // 4. Additional Upgrades matrix compiler
+      const activeUpgrades: string[] = [];
+      Object.keys(b.additionalServices).forEach((dayKey) => {
+        const srv = b.additionalServices[dayKey];
+        const dayLabel = getServiceDayLabel(dayKey);
+        if (srv.helicam) activeUpgrades.push(`Helicam on ${dayLabel}`);
+        if (srv.live) activeUpgrades.push(`YouTube Live on ${dayLabel}`);
+        if (srv.spotEdit) activeUpgrades.push(`Spot Edit on ${dayLabel}`);
+      });
+      const upgradesStr = activeUpgrades.join(" | ");
+
       const row = [
         b.id,
         `"${b.fullName.replace(/"/g, '""')}"`,
@@ -302,6 +351,10 @@ export default function AdminPortal() {
         `"${b.weddingVenue.replace(/"/g, '""')}"`,
         b.hasEngagement ? b.engagementDate : "N/A",
         b.hasEngagement ? `"${b.engagementVenue.replace(/"/g, '""')}"` : "N/A",
+        `"${eventsStr.replace(/"/g, '""')}"`,
+        `"${preWedsStr.replace(/"/g, '""')}"`,
+        `"${delivsStr.replace(/"/g, '""')}"`,
+        `"${upgradesStr.replace(/"/g, '""')}"`,
         b.totalPrice,
         b.createdAt
       ].join(",");
