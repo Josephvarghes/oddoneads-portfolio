@@ -175,7 +175,7 @@ export default function Home() {
               View Portfolio
             </Link>
             <Link
-              href="/contact"
+              href="/booking"
               className="px-8 py-4 border border-white/20 hover:border-brand-teal text-white hover:text-brand-teal text-xs uppercase tracking-widest font-semibold transition-all duration-300 backdrop-blur-sm text-center"
             >
               Book Your Date
@@ -316,7 +316,7 @@ export default function Home() {
 
                 <div className="pt-4 flex flex-col sm:flex-row gap-4">
                   <Link
-                    href={`/contact?vibe=${activeVibe.id}`}
+                    href={`/booking?vibe=${activeVibe.id}`}
                     className={`px-6 py-3 text-xs uppercase tracking-widest font-bold text-charcoal-950 bg-gradient-to-r ${activeVibe.gradient} text-center shadow-lg transition-transform duration-300 hover:scale-[1.02]`}
                   >
                     Check Vibe Date
@@ -641,7 +641,7 @@ export default function Home() {
             Spaces in our calendar are limited to ensure every couple receives our absolute dedication. Get in touch to check date availability.
           </p>
           <Link
-            href="/contact"
+            href="/booking"
             className="inline-block px-10 py-4 bg-brand-gradient hover:opacity-90 text-charcoal-950 text-xs uppercase tracking-widest font-semibold transition-all duration-300 shadow-lg shadow-brand-purple/20"
           >
             Book Consultation

@@ -103,7 +103,7 @@ export default function Navbar() {
             })}
             
             <Link
-              href="/contact"
+              href="/booking"
               className="px-5 py-2 text-xs uppercase tracking-widest font-semibold border border-brand-teal/40 text-brand-teal hover:bg-brand-gradient hover:text-charcoal-950 transition-all duration-500 backdrop-blur-sm hover:border-transparent shadow-lg shadow-brand-teal/5 hover:shadow-brand-pink/20"
             >
               Book Your Date
@@ -161,7 +161,7 @@ export default function Navbar() {
               })}
               
               <Link
-                href="/contact"
+                href="/booking"
                 onClick={() => setIsOpen(false)}
                 className="mt-8 mx-auto px-8 py-3 text-xs uppercase tracking-widest font-semibold border border-brand-teal text-brand-teal hover:bg-brand-gradient hover:text-charcoal-950 transition-all duration-300 w-full max-w-[280px]"
               >
