@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Sparkles, User, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { CHAT_BOT_QA } from "@/data/mockData";
 
 interface Message {
@@ -12,6 +13,7 @@ interface Message {
 }
 
 export default function AiConcierge() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -30,6 +32,8 @@ export default function AiConcierge() {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isTyping]);
+
+  if (pathname?.startsWith("/admin")) return null;
 
   const handleSendMessage = (text: string, isFromInput = false) => {
     if (!text.trim()) return;

@@ -35,6 +35,20 @@ export default function Navbar() {
     setIsOpen(false);
   }, [pathname]);
 
+  // Toggle scroll lock on body when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <>
       <header
@@ -123,40 +137,11 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed inset-0 z-40 bg-charcoal-950 flex flex-col justify-center px-8 md:hidden relative overflow-hidden"
+            className="fixed inset-0 z-40 bg-charcoal-950 flex flex-col justify-center px-8 md:hidden overflow-hidden"
           >
             {/* Ambient Background Glow in mobile drawer */}
             <div className="absolute -top-[10%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-brand-pink/10 blur-[80px]" />
             <div className="absolute -bottom-[10%] -right-[10%] w-[60vw] h-[60vw] rounded-full bg-brand-teal/10 blur-[80px]" />
-
-            {/* Header backdrop alignment */}
-            <div className="absolute top-6 left-6 flex items-center gap-3">
-              <div className="relative w-9 h-9 overflow-hidden rounded-full border border-white/10">
-                <Image
-                  src="/logo.jpg"
-                  alt="Odd One Ads Logo"
-                  fill
-                  sizes="36px"
-                  className="object-cover scale-110"
-                />
-              </div>
-              <div>
-                <span className="font-serif text-sm font-bold tracking-[0.25em] text-white block">
-                  ODD_ONE_ADS
-                </span>
-                <span className="font-sans text-[7px] tracking-[0.3em] text-brand-teal -mt-1 font-semibold uppercase block">
-                  PHOTOGRAPHY & WEDDING FILM
-                </span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-6 right-6 text-white hover:text-brand-pink p-2"
-              aria-label="Close menu"
-            >
-              <X size={24} />
-            </button>
 
             <nav className="flex flex-col gap-6 text-center z-10 relative">
               {NAV_LINKS.map((link) => {

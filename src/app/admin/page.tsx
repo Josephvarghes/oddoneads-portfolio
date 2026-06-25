@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
   Lock, 
   Unlock, 
@@ -90,6 +92,7 @@ const EVENT_LABELS: Record<string, string> = {
 };
 
 export default function AdminPortal() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isLogged, setIsLogged] = useState(false);
   const [username, setUsername] = useState("");
@@ -264,6 +267,7 @@ export default function AdminPortal() {
     setIsLogged(false);
     setUsername("");
     setPassword("");
+    router.push("/");
   };
 
   // Delete booking handler
@@ -507,6 +511,15 @@ export default function AdminPortal() {
 
           <div className="mt-8 text-center text-[10px] text-charcoal-500 border-t border-white/[0.04] pt-4 font-light">
             Demo Credentials: <span className="text-charcoal-400 font-semibold font-mono">nikhil / nikhil@123</span>
+          </div>
+
+          <div className="mt-4 text-center">
+            <Link 
+              href="/" 
+              className="text-[10px] uppercase tracking-wider text-brand-teal hover:text-brand-pink transition-colors font-medium inline-flex items-center gap-1.5"
+            >
+              ← Return to Main Site
+            </Link>
           </div>
         </motion.div>
       </div>

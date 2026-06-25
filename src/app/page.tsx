@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Film, Heart, Compass, Briefcase, ArrowRight, ChevronLeft, ChevronRight, Star, Sparkles } from "lucide-react";
+import { Camera, Film, Heart, Compass, Briefcase, ArrowRight, ChevronLeft, ChevronRight, Star, Sparkles, ChevronDown } from "lucide-react";
 import { SERVICES, PORTFOLIO_ITEMS, TESTIMONIALS } from "@/data/mockData";
 
 // Dynamic icon resolver
@@ -108,23 +108,29 @@ export default function Home() {
     <div className="relative overflow-hidden bg-charcoal-950">
       {/* 1. HERO SECTION */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* Background Image with Ken Burns Zoom Effect */}
+        {/* Background Video with Fallback Poster Image */}
         <div className="absolute inset-0 z-0">
-          <motion.div
-            initial={{ scale: 1.15 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 12, ease: "easeOut" }}
-            className="relative w-full h-full"
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000"
+            className="absolute inset-0 w-full h-full object-cover opacity-35 grayscale-[15%] brightness-[40%] transition-opacity duration-1000"
           >
+            <source
+              src="https://assets.mixkit.co/videos/preview/mixkit-wedding-couple-walking-out-of-church-under-confetti-42211-large.mp4"
+              type="video/mp4"
+            />
+            {/* Fallback image if browser doesn't support video */}
             <Image
               src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000"
               alt="Cinematic Wedding Background"
               fill
-              priority
               sizes="100vw"
-              className="object-cover object-center opacity-40 grayscale-[15%] brightness-[35%]"
+              className="object-cover object-center"
             />
-          </motion.div>
+          </video>
           {/* Ambient Video Overlay Gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/20 to-charcoal-950" />
           <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950/80 via-transparent to-charcoal-950/80" />
@@ -185,24 +191,41 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Animated Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
-          <span className="text-[9px] uppercase tracking-[0.3em] text-charcoal-500">
-            Scroll
+        {/* Enhanced Animated Scroll Indicator */}
+        <div 
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 cursor-pointer"
+          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
+        >
+          <span className="text-[9px] uppercase tracking-[0.3em] text-charcoal-400 font-semibold mb-1">
+            Scroll Down
           </span>
-          <div className="w-[18px] h-[30px] border border-charcoal-600 rounded-full flex justify-center p-1">
-            <motion.div
-              animate={{
-                y: [0, 10, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="w-1.5 h-1.5 bg-brand-pink rounded-full"
-            />
-          </div>
+          <motion.div
+            animate={{
+              y: [0, 6, 0],
+              opacity: [0.7, 1, 0.7],
+            }}
+            transition={{
+              duration: 1.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="flex flex-col items-center"
+          >
+            <div className="w-[20px] h-[32px] border border-white/20 rounded-full flex justify-center p-1.5 mb-1 bg-charcoal-950/40 backdrop-blur-sm">
+              <motion.div
+                animate={{
+                  y: [0, 10, 0],
+                }}
+                transition={{
+                  duration: 1.8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="w-1 h-2 bg-brand-teal rounded-full"
+              />
+            </div>
+            <ChevronDown size={14} className="text-brand-purple -mt-0.5" />
+          </motion.div>
         </div>
       </section>
 
