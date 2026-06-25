@@ -116,19 +116,11 @@ export default function Home() {
             muted
             playsInline
             poster="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000"
-            className="absolute inset-0 w-full h-full object-cover opacity-35 grayscale-[15%] brightness-[40%] transition-opacity duration-1000"
+            className="absolute inset-0 w-full h-full object-cover opacity-55 brightness-[70%] transition-opacity duration-1000"
           >
             <source
               src="/hero-wedding.mp4"
               type="video/mp4"
-            />
-            {/* Fallback image if browser doesn't support video */}
-            <Image
-              src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000"
-              alt="Cinematic Wedding Background"
-              fill
-              sizes="100vw"
-              className="object-cover object-center"
             />
           </video>
           {/* Ambient Video Overlay Gradient */}
