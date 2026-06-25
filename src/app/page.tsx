@@ -119,7 +119,7 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover opacity-35 grayscale-[15%] brightness-[40%] transition-opacity duration-1000"
           >
             <source
-              src="https://assets.mixkit.co/videos/preview/mixkit-wedding-couple-walking-out-of-church-under-confetti-42211-large.mp4"
+              src="/hero-wedding.mp4"
               type="video/mp4"
             />
             {/* Fallback image if browser doesn't support video */}
