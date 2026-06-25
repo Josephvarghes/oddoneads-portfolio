@@ -116,7 +116,7 @@ export default function Home() {
             muted
             playsInline
             poster="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000"
-            className="absolute inset-0 w-full h-full object-cover opacity-55 brightness-[70%] transition-opacity duration-1000"
+            className="absolute inset-0 w-full h-full object-cover opacity-75 md:opacity-55 brightness-[85%] md:brightness-[70%] transition-opacity duration-1000"
           >
             <source
               src="/hero-wedding.mp4"
@@ -125,7 +125,7 @@ export default function Home() {
           </video>
           {/* Ambient Video Overlay Gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/20 to-charcoal-950" />
-          <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950/80 via-transparent to-charcoal-950/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950/80 via-transparent to-charcoal-950/80 hidden md:block" />
         </div>
 
         {/* Hero Content */}
