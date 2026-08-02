@@ -321,7 +321,7 @@ function ContactPlannerForm({
     }, 1800);
   };
 
-  const stepLabels = ["Style", "Couple Info", "Dates & Venues", "Ceremonies", "Deliverables", "Production Matrix", "Live Quote"];
+  const stepLabels = ["Style", "Couple Info", "Dates & Venues", "Ceremonies", "Deliverables", "Production Matrix", "Review & Submit"];
 
   // Helper label resolver for Additional service day codes
   const getServiceDayLabel = (key: string): string => {
@@ -857,7 +857,7 @@ function ContactPlannerForm({
             </motion.div>
           )}
 
-          {/* STEP 7: Live Quote & Request Consultation */}
+          {/* STEP 7: Review Plan & Request Consultation */}
           {step === 7 && (
             <motion.div 
               key="step-7" 
@@ -867,65 +867,50 @@ function ContactPlannerForm({
               className="space-y-6"
             >
               <div>
-                <span className="text-[10px] uppercase tracking-[0.35em] text-brand-purple font-bold block mb-1">Step 07 / Confirmation</span>
-                <h3 className="font-serif text-2xl md:text-3xl font-bold text-white">Your Curated Quote</h3>
-                <p className="text-xs text-charcoal-400 font-light mt-1">Review your calculated estimate and submit to block your consultation meeting.</p>
+                <span className="text-[10px] uppercase tracking-[0.35em] text-brand-purple font-bold block mb-1">Step 07 / Review & Submit</span>
+                <h3 className="font-serif text-2xl md:text-3xl font-bold text-white">Review Your Visual Plan</h3>
+                <p className="text-xs text-charcoal-400 font-light mt-1">Review your customized timeline and submit to reserve your consultation meeting.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pt-3">
-                {/* Total Quote Ticker */}
-                <div className="md:col-span-5 bg-gradient-to-tr from-brand-teal/10 via-brand-purple/10 to-brand-pink/10 border border-brand-purple/20 p-6 rounded-xl flex flex-col justify-center items-center text-center shadow-lg relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-3 text-[10px] uppercase tracking-widest text-brand-teal font-extrabold flex items-center gap-1">
-                    <DollarSign size={10} /> Live Estimate
+              <div className="pt-3">
+                {/* Itemized Selection Summary */}
+                <div className="w-full bg-charcoal-950/30 border border-white/[0.04] p-6 rounded-xl space-y-4 font-sans">
+                  <div className="flex items-center justify-between border-b border-white/[0.04] pb-3">
+                    <span className="text-[10px] uppercase tracking-widest text-white font-extrabold block">
+                      Planner Summary
+                    </span>
+                    <span className="text-[9px] uppercase tracking-widest text-brand-teal font-extrabold px-3 py-1 bg-brand-teal/10 border border-brand-teal/20 rounded-full">
+                      Custom Proposal Mode
+                    </span>
                   </div>
                   
-                  <span className="text-xs uppercase tracking-widest text-charcoal-400 font-bold mb-2 font-sans">Estimated Package Cost</span>
-                  <motion.h3 
-                    key={calculateTotal()}
-                    initial={{ scale: 0.9, opacity: 0.8 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-teal via-brand-purple to-brand-pink font-serif tracking-wide"
-                  >
-                    ₹{calculateTotal().toLocaleString()}
-                  </motion.h3>
-                  <p className="text-[9px] text-charcoal-500 font-light mt-4 leading-relaxed max-w-[200px] font-sans">
-                    *Custom pricing tailored. Taxes and local permit fees computed during consultations.
-                  </p>
-                </div>
-
-                {/* Itemized Selection Summary */}
-                <div className="md:col-span-7 bg-charcoal-950/30 border border-white/[0.04] p-5 rounded-xl space-y-4 font-sans">
-                  <span className="text-[10px] uppercase tracking-widest text-white font-extrabold block border-b border-white/[0.04] pb-2">
-                    Planner Summary
-                  </span>
-                  
-                  <div className="space-y-2.5 max-h-[220px] overflow-y-auto text-xs pr-1">
+                  <div className="space-y-3 max-h-[300px] overflow-y-auto text-xs pr-1">
                     {/* Category summary */}
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-charcoal-400 font-light">Culture Vibe:</span>
                       <span className="text-white font-bold capitalize">{category} Wedding</span>
                     </div>
 
                     {/* Contact details summary */}
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-charcoal-400 font-light">Couple:</span>
-                      <span className="text-white font-medium truncate max-w-[180px]">{fullName}</span>
+                      <span className="text-white font-medium truncate max-w-[220px]">{fullName}</span>
                     </div>
 
                     {/* Venue & dates summary */}
-                    <div className="flex justify-between">
-                      <span className="text-charcoal-400 font-light">Dates:</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-charcoal-400 font-light">Dates & Venue:</span>
                       <span className="text-white font-medium text-right text-[11px]">
                         {weddingDate} &bull; {weddingVenue}
                       </span>
                     </div>
 
                     {/* Ceremony details summary */}
-                    <div className="border-t border-white/[0.02] pt-2 mt-2 space-y-1.5">
+                    <div className="border-t border-white/[0.02] pt-2.5 mt-2 space-y-1.5">
                       <span className="text-[10px] uppercase tracking-widest text-brand-teal font-bold block mb-1">Ceremonies Covered</span>
                       {Object.keys(events).filter(k => events[k].photo || events[k].video).map((k) => (
                         <div key={k} className="flex justify-between text-[11px] font-light">
-                          <span className="text-charcoal-400 truncate max-w-[180px]">&bull; {EVENT_LABELS[k] || k}</span>
+                          <span className="text-charcoal-400 truncate max-w-[220px]">&bull; {EVENT_LABELS[k] || k}</span>
                           <span className="text-white text-[10px] uppercase font-bold">
                             {[events[k].photo && "Photo", events[k].video && "Video"].filter(Boolean).join(" & ")}
                           </span>
@@ -935,7 +920,7 @@ function ContactPlannerForm({
 
                     {/* Deliverables summary */}
                     {Object.values(deliverables).some(Boolean) && (
-                      <div className="border-t border-white/[0.02] pt-2 mt-2 space-y-1.5">
+                      <div className="border-t border-white/[0.02] pt-2.5 mt-2 space-y-1.5">
                         <span className="text-[10px] uppercase tracking-widest text-brand-purple font-bold block mb-1">Deliverables Selection</span>
                         {Object.keys(deliverables).filter(k => deliverables[k as keyof DeliverableSelection]).map((k) => {
                           const labels: Record<keyof DeliverableSelection, string> = {
@@ -955,7 +940,7 @@ function ContactPlannerForm({
 
                     {/* Additional Production summary */}
                     {Object.keys(additionalServices).some(dayKey => Object.values(additionalServices[dayKey]).some(Boolean)) && (
-                      <div className="border-t border-white/[0.02] pt-2 mt-2 space-y-1.5">
+                      <div className="border-t border-white/[0.02] pt-2.5 mt-2 space-y-1.5">
                         <span className="text-[10px] uppercase tracking-widest text-brand-pink font-bold block mb-1">Production Upgrades</span>
                         {Object.keys(additionalServices).map((dayKey) => {
                           const srv = additionalServices[dayKey];
@@ -1060,9 +1045,8 @@ function ContactPlannerForm({
                   <span className="text-charcoal-500 font-medium uppercase tracking-wider block text-[8px]">Phone Number</span>
                   <span className="text-white font-bold">{phone}</span>
                 </div>
-                <div className="border-t border-white/[0.02] pt-2 flex justify-between font-bold">
-                  <span className="text-brand-teal">Calculated Estimate:</span>
-                  <span className="text-white">₹{calculateTotal().toLocaleString()}</span>
+                <div className="border-t border-white/[0.04] pt-3 text-center">
+                  <span className="text-[10px] uppercase tracking-widest text-brand-teal font-extrabold block">Visual Scope Recorded &bull; Directors Reviewing</span>
                 </div>
               </div>
 
@@ -1181,15 +1165,10 @@ function ContactSidebarSummary({
             </div>
 
             <div className="border-t border-brand-purple/20 pt-4 mt-4 flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-widest text-charcoal-400 font-bold">Running Estimate</span>
-              <motion.span 
-                key={calculateTotal()}
-                initial={{ scale: 0.95 }}
-                animate={{ scale: 1 }}
-                className="text-lg font-black text-white font-mono"
-              >
-                ₹{calculateTotal().toLocaleString()}
-              </motion.span>
+              <span className="text-[10px] uppercase tracking-widest text-brand-teal font-bold">Proposal Mode</span>
+              <span className="text-[11px] font-semibold text-white font-sans bg-brand-purple/20 border border-brand-purple/40 px-3 py-1 rounded-full">
+                Custom Quote Pending
+              </span>
             </div>
           </div>
         </div>
