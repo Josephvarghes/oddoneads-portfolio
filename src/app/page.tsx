@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, Film, Heart, Compass, Briefcase, ArrowRight, ChevronLeft, ChevronRight, Star, Sparkles, ChevronDown, Award, Globe, ShieldCheck } from "lucide-react";
-import { SERVICES, PORTFOLIO_ITEMS, TESTIMONIALS, ACCOLADES } from "@/data/mockData";
+import { SERVICES, PORTFOLIO_ITEMS, TESTIMONIALS, STUDIO_DISTINCTIONS } from "@/data/mockData";
 import LikeButton from "@/components/LikeButton";
 
 // Dynamic icon resolver
@@ -15,6 +15,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Heart: Heart,
   Compass: Compass,
   Briefcase: Briefcase,
+  Sparkles: Sparkles,
 };
 
 // Interactive Vibes data
@@ -451,45 +452,51 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. ACCOLADES & WORLD RECOGNITION (AUTHORITY BUILDER) */}
+      {/* 5. THE ODD ONE DISTINCTION (AUTHORITY & TRUST BUILDER) */}
       <section className="py-24 bg-charcoal-900/40 border-y border-white/[0.05]">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-[10px] tracking-[0.4em] text-brand-teal uppercase font-bold block mb-3">
-              ACCLAIM & HONORS
+              OUR COMMITMENT & STANDARDS
             </span>
             <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-wide mb-6">
-              Global Recognition
+              The Odd One Distinction
             </h2>
             <div className="w-12 h-[1px] bg-brand-teal/60 mx-auto" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {ACCOLADES.map((item, idx) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="glass-luxury p-6 rounded-xl border border-white/10 flex flex-col justify-between h-[220px] group hover:border-brand-purple/40 transition-colors"
-              >
-                <div>
-                  <span className="text-[9px] uppercase tracking-widest font-bold px-3 py-1 bg-brand-purple/20 text-brand-purple rounded-full inline-block mb-4">
-                    {item.badgeText}
+            {STUDIO_DISTINCTIONS.map((item, idx) => {
+              const DistIcon = iconMap[item.iconName] || Sparkles;
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                  className="glass-luxury p-6 rounded-xl border border-white/10 flex flex-col justify-between min-h-[250px] group hover:border-brand-teal/40 transition-all duration-500"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-[9px] uppercase tracking-widest font-bold px-3 py-1 bg-brand-teal/15 text-brand-teal border border-brand-teal/30 rounded-full">
+                        {item.badgeText}
+                      </span>
+                      <DistIcon size={18} className="text-brand-purple group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-white mb-2 leading-snug group-hover:text-brand-teal transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-charcoal-300 font-light leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
+                  <span className="text-[9px] font-sans text-brand-purple font-bold tracking-widest uppercase mt-4 pt-3 border-t border-white/[0.06]">
+                    {item.pillar}
                   </span>
-                  <h3 className="font-serif text-lg font-bold text-white mb-2 leading-snug group-hover:text-brand-teal transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-charcoal-400 font-light">
-                    {item.organization}
-                  </p>
-                </div>
-                <span className="text-[10px] font-sans text-charcoal-500 font-bold tracking-widest">
-                  HONORED {item.year}
-                </span>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

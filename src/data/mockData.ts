@@ -6,6 +6,15 @@ export interface Accolade {
   badgeText: string;
 }
 
+export interface StudioDistinction {
+  id: string;
+  title: string;
+  description: string;
+  pillar: string;
+  badgeText: string;
+  iconName: string;
+}
+
 export interface Service {
   id: string;
   title: string;
@@ -68,34 +77,49 @@ export interface TeamMember {
 // Mock Data Objects
 // ----------------------------------------------------
 
+export const STUDIO_DISTINCTIONS: StudioDistinction[] = [
+  {
+    id: "dist-1",
+    title: "Limited Annual Commissions",
+    description: "We strictly accept a limited number of luxury weddings each year to guarantee total visual commitment and bespoke artistry for every couple.",
+    pillar: "EXCLUSIVITY & FOCUS",
+    badgeText: "LIMITED SLOTS",
+    iconName: "Sparkles"
+  },
+  {
+    id: "dist-2",
+    title: "Cinema-Grade Post-Production",
+    description: "Handcrafted motion-picture color grading, 4K HDR mastering, and bespoke audio soundscapes designed by film sound artists.",
+    pillar: "TECHNICAL MASTERY",
+    badgeText: "4K HDR MASTERED",
+    iconName: "Film"
+  },
+  {
+    id: "dist-3",
+    title: "Zero Stiff Poses Guarantee",
+    description: "Unscripted, raw emotional realism. We capture authentic chemistry, candid laughter, and unforced tears as they naturally unfold.",
+    pillar: "ARTISTIC PHILOSOPHY",
+    badgeText: "RAW CANDID ART",
+    iconName: "Heart"
+  },
+  {
+    id: "dist-4",
+    title: "Worldwide Logistics & Mobility",
+    description: "Equipped for extreme terrains, heritage palaces, and international destinations with full drone licensing and multi-hub agility.",
+    pillar: "GLOBAL READINESS",
+    badgeText: "DESTINATION READY",
+    iconName: "Compass"
+  }
+];
+
+// Deprecated fallback for backward compatibility
 export const ACCOLADES: Accolade[] = [
   {
     id: "acc-1",
-    title: "International Wedding Film of the Year",
-    organization: "Fearless Photographers Guild",
-    year: "2025",
-    badgeText: "WINNER 2025"
-  },
-  {
-    id: "acc-2",
-    title: "Top 10 Destination Storytellers in Asia & Europe",
-    organization: "Luxury Wedding Magazine",
-    year: "2025",
-    badgeText: "TOP 10 HONOREE"
-  },
-  {
-    id: "acc-3",
-    title: "Best Fine Art Cinematic Edit",
-    organization: "Global Wedding Awards",
-    year: "2024",
-    badgeText: "GOLD MEDALIST"
-  },
-  {
-    id: "acc-4",
-    title: "Master of Off-Camera Light & Shadow",
-    organization: "International Photo Masters",
-    year: "2024",
-    badgeText: "ARTISTIC FELLOW"
+    title: "Limited Annual Commissions",
+    organization: "Odd One Studio Commitment",
+    year: "2026",
+    badgeText: "LIMITED SLOTS"
   }
 ];
 
