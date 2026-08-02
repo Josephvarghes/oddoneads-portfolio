@@ -23,7 +23,7 @@ interface Vibe {
   name: string;
   tagline: string;
   description: string;
-  category: "pre-wedding" | "destination" | "weddings" | "corporate";
+  category: "pre-wedding" | "destination" | "weddings";
   colorClass: string;
   glowColor: string;
   gradient: string;
@@ -69,7 +69,7 @@ const VIBES: Vibe[] = [
     name: "Modern Editorial",
     tagline: "High-Fashion & Framed Arts",
     description: "High-fashion style grids, neat geometric compositions, bold layouts, and creative studio styling inspired by luxury editorial magazines.",
-    category: "corporate",
+    category: "pre-wedding",
     colorClass: "text-brand-pink",
     glowColor: "from-brand-pink/20 via-brand-teal/10 to-transparent",
     gradient: "from-brand-pink to-brand-teal",
