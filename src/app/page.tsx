@@ -108,7 +108,7 @@ export default function Home() {
   return (
     <div className="relative overflow-hidden bg-charcoal-950">
       {/* 1. HIGH-OCTANE HERO SECTION */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-28 pb-16 md:pt-36 md:pb-20">
         {/* Background Video with Fallback Poster Image */}
         <div className="absolute inset-0 z-0">
           <video
@@ -137,7 +137,7 @@ export default function Home() {
             transition={{ duration: 1, delay: 0.2 }}
             className="mb-4"
           >
-            <span className="text-[10px] md:text-xs tracking-[0.6em] text-brand-teal uppercase font-bold px-4 py-1.5 border border-brand-teal/30 bg-charcoal-950/60 backdrop-blur-md rounded-full">
+            <span className="inline-flex items-center justify-center text-[9px] sm:text-[10px] md:text-xs tracking-[0.25em] sm:tracking-[0.4em] md:tracking-[0.6em] text-brand-teal uppercase font-bold px-3.5 sm:px-5 py-1 sm:py-1.5 border border-brand-teal/30 bg-charcoal-950/60 backdrop-blur-md rounded-full max-w-full text-center font-sans">
               INDIA • UNITED KINGDOM • DUBAI
             </span>
           </motion.div>
