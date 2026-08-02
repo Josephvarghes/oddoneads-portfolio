@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Phone, 
@@ -1212,10 +1211,6 @@ function ContactSidebarSummary({
 
 // Client container passing state coordinates to sidebar and planner form
 function ContactPlannerContainer() {
-  const searchParams = useSearchParams();
-  const initialVibe = searchParams.get("vibe");
-  const initialType = searchParams.get("type");
-
   const [step, setStep] = useState<number>(1);
   const [category, setCategory] = useState<string>("");
   const [fullName, setFullName] = useState("");
@@ -1310,19 +1305,7 @@ function ContactPlannerContainer() {
     setAdditionalServices(initialServices);
   }, [category]);
 
-  useEffect(() => {
-    if (initialType) {
-      if (["christian", "hindu", "muslim"].includes(initialType.toLowerCase())) {
-        setCategory(initialType.toLowerCase());
-        setStep(2);
-      }
-    } else if (initialVibe) {
-      if (initialVibe === "ethereal-dreamer") setCategory("christian");
-      else if (initialVibe === "raw-storyteller") setCategory("hindu");
-      else if (initialVibe === "cinematic-luxury" || initialVibe === "modern-editorial") setCategory("muslim");
-      setStep(2);
-    }
-  }, [initialVibe, initialType]);
+  // Always start at Step 1 to allow the user to select their wedding tradition (Christian, Hindu, Muslim)
 
   const handleEventToggle = (evtKey: string, type: "photo" | "video") => {
     setEvents((prev) => ({

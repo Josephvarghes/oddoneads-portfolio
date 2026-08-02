@@ -344,7 +344,7 @@ export default function Home() {
 
                 <div className="pt-4 flex flex-col sm:flex-row gap-4">
                   <Link
-                    href={`/booking?vibe=${activeVibe.id}`}
+                    href="/booking"
                     className={`px-7 py-3.5 text-xs uppercase tracking-widest font-bold text-charcoal-950 bg-gradient-to-r ${activeVibe.gradient} text-center shadow-lg transition-transform duration-300 hover:scale-[1.02]`}
                   >
                     Check Availability
