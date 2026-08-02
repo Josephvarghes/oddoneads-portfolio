@@ -35,15 +35,15 @@ export default function Footer() {
                 ODD_ONE_ADS
               </span>
               <span className="font-sans text-[9px] tracking-[0.3em] text-brand-teal -mt-1 font-semibold uppercase group-hover:text-brand-pink transition-colors duration-300">
-                PHOTOGRAPHY & WEDDING FILM
+                FILM & VISUAL ARTISTRY
               </span>
             </div>
           </Link>
-          <p className="font-serif italic text-white/70 max-w-sm mb-6 leading-relaxed">
-            &ldquo;Unwrap the tale of your perfect day.&rdquo;
+          <p className="font-serif italic text-white/90 text-lg max-w-sm mb-4 leading-relaxed">
+            &ldquo;Raw. Unfiltered. Cinematic.&rdquo;
           </p>
           <p className="text-xs text-charcoal-400 max-w-sm leading-relaxed">
-            Capturing premium, storytelling-focused wedding photography and cinema. Serving couples locally and at destination celebrations worldwide.
+            Unapologetic, high-octane visual storytelling. Crafting fine-art films and fearless destination imagery across India, the UK, Dubai, and worldwide.
           </p>
         </div>
 

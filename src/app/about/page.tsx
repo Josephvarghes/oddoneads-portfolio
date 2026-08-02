@@ -40,14 +40,14 @@ export default function About() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="space-y-6 text-sm text-charcoal-300 font-light leading-relaxed"
             >
-              <p className="font-serif italic text-lg text-white/95 leading-relaxed">
-                STORIES FROM ODD_ONE_ADS is a premium creative studio dedicated to capturing genuine emotions and unforgettable moments through timeless photography and cinematic storytelling.
+              <p className="font-serif italic text-xl text-white/95 leading-relaxed">
+                ODD_ONE_ADS is an unapologetic, fine-art visual storytelling studio dedicated to recording raw, untamed human connection across the globe.
               </p>
               <p>
-                Founded on the belief that every love story deserves to be recorded as a work of fine art, we have spent a decade traveling the globe to unwrap the tales of couples who share a passion for luxury, authenticity, and visual storytelling.
+                Founded on the belief that love stories deserve bold, cinematic artistry rather than soft clichés, we spend every season traveling between India, the United Kingdom, and Dubai. We capture couples who seek high-conviction imagery, off-camera lighting drama, and unscripted realism.
               </p>
               <p>
-                We eschew standard commercial setups in favor of natural light, deep cinematic palettes, and intimate storytelling. Our lenses don&apos;t just capture faces; they catch the quiet intakes of breath before vows, the fleeting touch of hands, and the laughter that rings out long after the music has stopped.
+                We eschew standard commercial templates. We don&apos;t direct stiff poses; we record how your heart beats in the moment. From quiet dawn whispers on Mediterranean cliffs to electric midnight galas, our lenses capture your legacy in breathtaking cinema.
               </p>
             </motion.div>
 

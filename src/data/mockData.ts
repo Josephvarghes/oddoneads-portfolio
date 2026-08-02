@@ -1,3 +1,11 @@
+export interface Accolade {
+  id: string;
+  title: string;
+  organization: string;
+  year: string;
+  badgeText: string;
+}
+
 export interface Service {
   id: string;
   title: string;
@@ -11,7 +19,7 @@ export interface PortfolioItem {
   id: string;
   title: string;
   location: string;
-  category: "weddings" | "pre-wedding" | "destination" | "corporate";
+  category: "weddings" | "pre-wedding" | "destination";
   imageUrl: string;
 }
 
@@ -60,119 +68,142 @@ export interface TeamMember {
 // Mock Data Objects
 // ----------------------------------------------------
 
+export const ACCOLADES: Accolade[] = [
+  {
+    id: "acc-1",
+    title: "International Wedding Film of the Year",
+    organization: "Fearless Photographers Guild",
+    year: "2025",
+    badgeText: "WINNER 2025"
+  },
+  {
+    id: "acc-2",
+    title: "Top 10 Destination Storytellers in Asia & Europe",
+    organization: "Luxury Wedding Magazine",
+    year: "2025",
+    badgeText: "TOP 10 HONOREE"
+  },
+  {
+    id: "acc-3",
+    title: "Best Fine Art Cinematic Edit",
+    organization: "Global Wedding Awards",
+    year: "2024",
+    badgeText: "GOLD MEDALIST"
+  },
+  {
+    id: "acc-4",
+    title: "Master of Off-Camera Light & Shadow",
+    organization: "International Photo Masters",
+    year: "2024",
+    badgeText: "ARTISTIC FELLOW"
+  }
+];
+
 export const SERVICES: Service[] = [
   {
     id: "photography",
-    title: "Wedding Photography",
+    title: "Fine Art Wedding Photography",
     iconName: "Camera",
-    description: "Fine-art wedding photography focusing on raw emotions, candid smiles, and the timeless elegance of your special day.",
-    ctaText: "Explore Gallery",
+    description: "Unscripted, high-octane visual artistry capturing raw emotion, off-camera lighting drama, and timeless elegance without forced posing.",
+    ctaText: "EXPERIENCE GALLERY",
     category: "weddings"
   },
   {
     id: "films",
-    title: "Wedding Films",
+    title: "Cinematic Heritage Films",
     iconName: "Film",
-    description: "Cinematic, storytelling-focused films that capture the sounds, movements, and heartbeat of your wedding day as a movie.",
-    ctaText: "Watch Films",
+    description: "Motion-picture grade storytelling that captures the heartbeat, sounds, and visceral motion of your celebration as a cinematic feature.",
+    ctaText: "WATCH FILMS",
     category: "weddings"
   },
   {
     id: "prewedding",
-    title: "Pre-Wedding Shoots",
+    title: "Pre-Wedding Narrative Shoots",
     iconName: "Heart",
-    description: "An intimate, personalized visual session capturing the natural chemistry between you and your partner in stunning backdrops.",
-    ctaText: "See Shoots",
+    description: "An intimate, editorial visual session capturing raw chemistry against extraordinary natural and architectural canvases worldwide.",
+    ctaText: "DISCOVER SHOOTS",
     category: "pre-wedding"
   },
   {
     id: "destination",
-    title: "Destination Weddings",
+    title: "Fearless Destination Artistry",
     iconName: "Compass",
-    description: "Traveling globally to tell luxury stories in magical settings—from the shores of Santorini to the palaces of Udaipur and skylines of Dubai.",
-    ctaText: "Discover Venues",
+    description: "Global mobility across continents—from Lake Como villas to Rajasthan palaces and Dubai skylines. Unbound by location or terrain.",
+    ctaText: "EXPLORE DESTINATIONS",
     category: "destination"
-  },
-  {
-    id: "corporate",
-    title: "Corporate Events",
-    iconName: "Briefcase",
-    description: "Premium coverage of corporate galas, launches, and summits, emphasizing professional storytelling and high-fidelity visuals.",
-    ctaText: "View Corporate",
-    category: "corporate"
   }
 ];
 
 export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "portfolio-1",
-    title: "Akhil & Diya",
-    location: "Lake Como, Italy",
-    category: "destination",
-    imageUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200"
+    title: "Mebin & Jeona",
+    location: "Kochi, Kerala",
+    category: "weddings",
+    imageUrl: "/images/portfolio/weddings/mebin - Jeona.jpg"
   },
   {
     id: "portfolio-2",
-    title: "Rohan & Shruti",
-    location: "Udaipur, India",
+    title: "Celebration of Grace",
+    location: "Kerala, India",
     category: "weddings",
-    imageUrl: "https://images.unsplash.com/photo-1607190074257-dd4b7af0309f?q=80&w=1200"
+    imageUrl: "/images/portfolio/weddings/another.jpg"
   },
   {
     id: "portfolio-3",
-    title: "The Royal Gala",
-    location: "London, UK",
-    category: "corporate",
-    imageUrl: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200"
+    title: "Intimate Harmony",
+    location: "Mumbai, India",
+    category: "weddings",
+    imageUrl: "/images/portfolio/weddings/another_couple.jpg"
   },
   {
     id: "portfolio-4",
-    title: "Sarah & David",
-    location: "Santorini, Greece",
-    category: "destination",
-    imageUrl: "https://images.unsplash.com/photo-1507504038482-7621c324e93d?q=80&w=1200"
-  },
-  {
-    id: "portfolio-5",
     title: "Arjun & Meera",
     location: "Kerala Backwaters, India",
     category: "pre-wedding",
-    imageUrl: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1200"
+    imageUrl: "/images/portfolio/pre-wedding/1.jpg"
+  },
+  {
+    id: "portfolio-5",
+    title: "Sunlit Memories",
+    location: "Goa, India",
+    category: "pre-wedding",
+    imageUrl: "/images/portfolio/pre-wedding/2.jpg"
   },
   {
     id: "portfolio-6",
-    title: "Varun & Anjali",
-    location: "Dubai Marina, UAE",
-    category: "destination",
-    imageUrl: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200"
+    title: "Golden Hour Whispers",
+    location: "Wayanad, India",
+    category: "pre-wedding",
+    imageUrl: "/images/portfolio/pre-wedding/3.jpg"
   },
   {
     id: "portfolio-7",
-    title: "Sunlit Romance",
-    location: "Goa, India",
-    category: "pre-wedding",
-    imageUrl: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200"
+    title: "Akhil & Diya",
+    location: "Lake Como, Italy",
+    category: "destination",
+    imageUrl: "/images/portfolio/destination/d_1.jpg"
   },
   {
     id: "portfolio-8",
-    title: "Tech Summit 2026",
-    location: "Bangalore, India",
-    category: "corporate",
-    imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=1200"
+    title: "Sarah & David",
+    location: "Santorini, Greece",
+    category: "destination",
+    imageUrl: "/images/portfolio/destination/d_2.jpg"
   },
   {
     id: "portfolio-9",
-    title: "Neha & Kabir",
-    location: "Jaipur, India",
-    category: "weddings",
-    imageUrl: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=1200"
+    title: "Varun & Anjali",
+    location: "Dubai Marina, UAE",
+    category: "destination",
+    imageUrl: "/images/portfolio/destination/d_3.jpg"
   },
   {
     id: "portfolio-10",
     title: "Siddharth & Tanya",
     location: "Tuscany, Italy",
     category: "destination",
-    imageUrl: "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=1200"
+    imageUrl: "/images/portfolio/destination/d_4.jpg"
   }
 ];
 

@@ -61,14 +61,14 @@ export default function Contact() {
         
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-[10px] tracking-[0.4em] text-brand-purple uppercase font-semibold block mb-3">
-            Get In Touch
+          <span className="text-[10px] tracking-[0.5em] text-brand-purple uppercase font-bold block mb-3">
+            EXCLUSIVE COMMISSIONS
           </span>
-          <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-wide mb-6">
-            Let&apos;s Tell Your Story
+          <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-tight mb-6">
+            Inquire For Availability
           </h1>
-          <p className="text-xs md:text-sm text-charcoal-400 font-light max-w-lg mx-auto leading-relaxed">
-            Have a question, custom request, or want to explore working together? Reach out using the form below or connect via our direct hotlines.
+          <p className="text-sm md:text-base text-charcoal-300 font-light max-w-xl mx-auto leading-relaxed">
+            We limit our calendar to a selective number of weddings each year to deliver uncompromising visual excellence. Tell us about your story below.
           </p>
         </div>
 
@@ -222,7 +222,6 @@ export default function Contact() {
                     <option value="wedding-films">Wedding Films</option>
                     <option value="destination-weddings">Destination Wedding Package</option>
                     <option value="pre-wedding">Pre-Wedding Shoots</option>
-                    <option value="corporate-events">Corporate Event Coverage</option>
                   </select>
                 </div>
                 <div>

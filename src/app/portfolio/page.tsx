@@ -5,8 +5,9 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, MapPin, ZoomIn } from "lucide-react";
 import { PORTFOLIO_ITEMS, PortfolioItem } from "@/data/mockData";
+import LikeButton from "@/components/LikeButton";
 
-const CATEGORIES = ["all", "weddings", "pre-wedding", "destination", "corporate"];
+const CATEGORIES = ["all", "weddings", "pre-wedding", "destination"];
 
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -126,8 +127,13 @@ export default function Portfolio() {
                   </span>
                 </div>
 
-                {/* Floating zoom indicator */}
-                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {/* Top-Right Instagram Style Like Button */}
+                <div className="absolute top-4 right-4 z-20">
+                  <LikeButton />
+                </div>
+
+                {/* Floating zoom indicator on hover */}
+                <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                   <ZoomIn size={14} />
                 </div>
               </motion.div>
