@@ -23,8 +23,26 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate submission delay
+    // Save contact inquiry to localStorage
     setTimeout(() => {
+      if (typeof window !== "undefined") {
+        const newContact = {
+          id: `contact-${Date.now()}`,
+          fullName: formState.fullName,
+          email: formState.email,
+          phone: formState.phone,
+          eventType: formState.eventType,
+          eventDate: formState.eventDate,
+          eventLocation: formState.eventLocation,
+          message: formState.message,
+          createdAt: new Date().toISOString()
+        };
+        const existing = localStorage.getItem("oddone_contacts");
+        const list = existing ? JSON.parse(existing) : [];
+        list.unshift(newContact);
+        localStorage.setItem("oddone_contacts", JSON.stringify(list));
+      }
+
       setIsSubmitting(false);
       setShowSuccess(true);
       // Reset form
@@ -38,7 +56,7 @@ export default function Contact() {
         budgetRange: "luxury-destination",
         message: "",
       });
-    }, 1500);
+    }, 1200);
   };
 
   const handleInputChange = (

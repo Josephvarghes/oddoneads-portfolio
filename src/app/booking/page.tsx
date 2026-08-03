@@ -9,14 +9,12 @@ import {
   Film, 
   ArrowLeft, 
   ArrowRight, 
-  Send, 
   CheckCircle2, 
   Calendar, 
   Check, 
   Info, 
   Mail, 
-  User,
-  DollarSign
+  User
 } from "lucide-react";
 
 // Event selections for Photographer/Videographer
@@ -183,7 +181,6 @@ interface ContactPlannerFormProps {
   deliverables: DeliverableSelection;
   setDeliverables: React.Dispatch<React.SetStateAction<DeliverableSelection>>;
   additionalServices: Record<string, AdditionalService>;
-  calculateTotal: () => number;
   isSubmitting: boolean;
   setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
   showSuccess: boolean;
@@ -192,7 +189,6 @@ interface ContactPlannerFormProps {
   setErrors: React.Dispatch<React.SetStateAction<string[]>>;
   handleEventToggle: (evtKey: string, type: "photo" | "video") => void;
   handleServiceToggle: (dayKey: string, service: keyof AdditionalService) => void;
-  resetAllFields: () => void;
 }
 
 function ContactPlannerForm({
@@ -222,7 +218,6 @@ function ContactPlannerForm({
   deliverables,
   setDeliverables,
   additionalServices,
-  calculateTotal,
   isSubmitting,
   setIsSubmitting,
   showSuccess,
@@ -230,8 +225,7 @@ function ContactPlannerForm({
   errors,
   setErrors,
   handleEventToggle,
-  handleServiceToggle,
-  resetAllFields
+  handleServiceToggle
 }: ContactPlannerFormProps) {
 
   const handleDeliverableToggle = (key: keyof DeliverableSelection) => {
@@ -286,12 +280,16 @@ function ContactPlannerForm({
 
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
+    if (step < 6) {
+      handleNextStep();
+      return;
+    }
     if (!validateStep()) return;
+    if (isSubmitting) return;
     
     setIsSubmitting(true);
-    // Simulate API request call
+    // Save booking details to localStorage ONCE
     setTimeout(() => {
-      // Save booking details to localStorage before showing success
       if (typeof window !== "undefined") {
         const newBooking = {
           id: `book-${Date.now()}`,
@@ -308,7 +306,6 @@ function ContactPlannerForm({
           preWedding,
           deliverables,
           additionalServices,
-          totalPrice: calculateTotal(),
           createdAt: new Date().toISOString()
         };
         const existing = localStorage.getItem("oddone_bookings");
@@ -318,10 +315,10 @@ function ContactPlannerForm({
       }
       setIsSubmitting(false);
       setShowSuccess(true);
-    }, 1800);
+    }, 1200);
   };
 
-  const stepLabels = ["Style", "Couple Info", "Dates & Venues", "Ceremonies", "Deliverables", "Production Matrix", "Review & Submit"];
+  const stepLabels = ["Style", "Couple Info", "Dates & Venues", "Ceremonies", "Deliverables", "Production Matrix"];
 
   // Helper label resolver for Additional service day codes
   const getServiceDayLabel = (key: string): string => {
@@ -357,8 +354,8 @@ function ContactPlannerForm({
         <div className="w-full h-1.5 bg-charcoal-950 rounded-full overflow-hidden">
           <motion.div 
             className="h-full bg-brand-gradient" 
-            initial={{ width: "14%" }} 
-            animate={{ width: `${(step / 7) * 100}%` }} 
+            initial={{ width: "16.6%" }} 
+            animate={{ width: `${(step / 6) * 100}%` }} 
             transition={{ duration: 0.5, ease: "easeOut" }} 
           />
         </div>
@@ -857,113 +854,7 @@ function ContactPlannerForm({
             </motion.div>
           )}
 
-          {/* STEP 7: Review Plan & Request Consultation */}
-          {step === 7 && (
-            <motion.div 
-              key="step-7" 
-              initial={{ opacity: 0, x: 20 }} 
-              animate={{ opacity: 1, x: 0 }} 
-              exit={{ opacity: 0, x: -20 }} 
-              className="space-y-6"
-            >
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.35em] text-brand-purple font-bold block mb-1">Step 07 / Review & Submit</span>
-                <h3 className="font-serif text-2xl md:text-3xl font-bold text-white">Review Your Visual Plan</h3>
-                <p className="text-xs text-charcoal-400 font-light mt-1">Review your customized timeline and submit to reserve your consultation meeting.</p>
-              </div>
-
-              <div className="pt-3">
-                {/* Itemized Selection Summary */}
-                <div className="w-full bg-charcoal-950/30 border border-white/[0.04] p-6 rounded-xl space-y-4 font-sans">
-                  <div className="flex items-center justify-between border-b border-white/[0.04] pb-3">
-                    <span className="text-[10px] uppercase tracking-widest text-white font-extrabold block">
-                      Planner Summary
-                    </span>
-                    <span className="text-[9px] uppercase tracking-widest text-brand-teal font-extrabold px-3 py-1 bg-brand-teal/10 border border-brand-teal/20 rounded-full">
-                      Custom Proposal Mode
-                    </span>
-                  </div>
-                  
-                  <div className="space-y-3 max-h-[300px] overflow-y-auto text-xs pr-1">
-                    {/* Category summary */}
-                    <div className="flex justify-between items-center">
-                      <span className="text-charcoal-400 font-light">Culture Vibe:</span>
-                      <span className="text-white font-bold capitalize">{category} Wedding</span>
-                    </div>
-
-                    {/* Contact details summary */}
-                    <div className="flex justify-between items-center">
-                      <span className="text-charcoal-400 font-light">Couple:</span>
-                      <span className="text-white font-medium truncate max-w-[220px]">{fullName}</span>
-                    </div>
-
-                    {/* Venue & dates summary */}
-                    <div className="flex justify-between items-center">
-                      <span className="text-charcoal-400 font-light">Dates & Venue:</span>
-                      <span className="text-white font-medium text-right text-[11px]">
-                        {weddingDate} &bull; {weddingVenue}
-                      </span>
-                    </div>
-
-                    {/* Ceremony details summary */}
-                    <div className="border-t border-white/[0.02] pt-2.5 mt-2 space-y-1.5">
-                      <span className="text-[10px] uppercase tracking-widest text-brand-teal font-bold block mb-1">Ceremonies Covered</span>
-                      {Object.keys(events).filter(k => events[k].photo || events[k].video).map((k) => (
-                        <div key={k} className="flex justify-between text-[11px] font-light">
-                          <span className="text-charcoal-400 truncate max-w-[220px]">&bull; {EVENT_LABELS[k] || k}</span>
-                          <span className="text-white text-[10px] uppercase font-bold">
-                            {[events[k].photo && "Photo", events[k].video && "Video"].filter(Boolean).join(" & ")}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Deliverables summary */}
-                    {Object.values(deliverables).some(Boolean) && (
-                      <div className="border-t border-white/[0.02] pt-2.5 mt-2 space-y-1.5">
-                        <span className="text-[10px] uppercase tracking-widest text-brand-purple font-bold block mb-1">Deliverables Selection</span>
-                        {Object.keys(deliverables).filter(k => deliverables[k as keyof DeliverableSelection]).map((k) => {
-                          const labels: Record<keyof DeliverableSelection, string> = {
-                            album1: "Premium Album 1",
-                            album2: "Premium Album 2",
-                            highlights1: "Highlights Film 1",
-                            highlights2: "Highlights Film 2",
-                            documentary: "Full Length Film",
-                            reels: "Teaser Reels"
-                          };
-                          return (
-                            <div key={k} className="text-charcoal-400 font-light text-[11px]">&bull; {labels[k as keyof DeliverableSelection]}</div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Additional Production summary */}
-                    {Object.keys(additionalServices).some(dayKey => Object.values(additionalServices[dayKey]).some(Boolean)) && (
-                      <div className="border-t border-white/[0.02] pt-2.5 mt-2 space-y-1.5">
-                        <span className="text-[10px] uppercase tracking-widest text-brand-pink font-bold block mb-1">Production Upgrades</span>
-                        {Object.keys(additionalServices).map((dayKey) => {
-                          const srv = additionalServices[dayKey];
-                          const activeSrvs = [
-                            srv.helicam && "Helicam",
-                            srv.live && "Livestream",
-                            srv.spotEdit && "Spot Video"
-                          ].filter(Boolean);
-                          if (activeSrvs.length === 0) return null;
-                          return (
-                            <div key={dayKey} className="flex justify-between text-[11px] font-light">
-                              <span className="text-charcoal-400">&bull; {getServiceDayLabel(dayKey)}:</span>
-                              <span className="text-white text-[10px]">{activeSrvs.join(", ")}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
+          {/* STEP 6: Production Matrix (Final Step) */}
 
         </AnimatePresence>
 
@@ -982,25 +873,14 @@ function ContactPlannerForm({
             <div />
           )}
 
-          {step < 7 ? (
-            <button 
-              type="button" 
-              onClick={handleNextStep} 
-              className="flex items-center gap-2 px-6 py-3 bg-brand-gradient hover:opacity-95 text-charcoal-950 text-[10px] uppercase font-extrabold tracking-widest cursor-pointer transition-opacity rounded-lg shadow-lg shadow-brand-purple/10 font-sans"
-            >
-              Next Step
-              <ArrowRight size={12} />
-            </button>
-          ) : (
-            <button 
-              type="submit" 
-              disabled={isSubmitting} 
-              className="flex items-center gap-2 px-8 py-3 bg-white text-charcoal-950 text-[10px] uppercase font-extrabold tracking-widest cursor-pointer hover:bg-neutral-100 transition-colors rounded-lg shadow-lg shadow-white/10 font-sans"
-            >
-              {isSubmitting ? "Recording Response..." : "Submit Consultation Request"}
-              <Send size={12} />
-            </button>
-          )}
+          <button 
+            type="submit" 
+            disabled={isSubmitting} 
+            className="flex items-center gap-2 px-6 py-3 bg-brand-gradient hover:opacity-95 text-charcoal-950 text-[10px] uppercase font-extrabold tracking-widest cursor-pointer transition-opacity rounded-lg shadow-lg shadow-brand-purple/10 font-sans"
+          >
+            {isSubmitting ? "Processing..." : "Next Step"}
+            <ArrowRight size={12} />
+          </button>
         </div>
       </form>
 
@@ -1027,8 +907,8 @@ function ContactPlannerForm({
               </motion.div>
               
               <div className="space-y-2">
-                <h4 className="font-serif text-3xl font-bold text-white tracking-wide">Planner Saved!</h4>
-                <p className="text-xs text-charcoal-400 font-light">Greetings From Odd_One_Ads weddings team. Your romantic journey specifications have been successfully recorded.</p>
+                <h4 className="font-serif text-3xl font-bold text-white tracking-wide">Enquiry Submitted!</h4>
+                <p className="text-xs text-charcoal-400 font-light">Greetings From Odd_One_Ads weddings team. Your wedding specifications have been successfully recorded.</p>
               </div>
 
               {/* Submitted summaries */}
@@ -1051,15 +931,8 @@ function ContactPlannerForm({
               </div>
 
               <p className="text-[10px] text-charcoal-500 italic max-w-xs mx-auto">
-                We will reach out to you within 24 hours to schedule an online alignment consultation and unwrap the details.
+                We will review your inquiry details and get back to you within 24 hours.
               </p>
-
-              <button 
-                onClick={resetAllFields} 
-                className="px-8 py-3 bg-brand-gradient hover:opacity-90 text-charcoal-950 text-[10px] uppercase font-bold tracking-widest transition-opacity rounded-lg cursor-pointer inline-block"
-              >
-                Plan Another Wedding
-              </button>
             </div>
           </motion.div>
         )}
@@ -1076,7 +949,6 @@ interface ContactSidebarSummaryProps {
   preWedding: PreWeddingSelection;
   deliverables: DeliverableSelection;
   additionalServices: Record<string, AdditionalService>;
-  calculateTotal: () => number;
 }
 
 // Side dashboard panel showing current selections state
@@ -1087,8 +959,7 @@ function ContactSidebarSummary({
   events,
   preWedding,
   deliverables,
-  additionalServices,
-  calculateTotal
+  additionalServices
 }: ContactSidebarSummaryProps) {
   const selectedEventsCount = Object.values(events).filter(e => e.photo || e.video).length;
   
@@ -1167,7 +1038,7 @@ function ContactSidebarSummary({
             <div className="border-t border-brand-purple/20 pt-4 mt-4 flex items-center justify-between">
               <span className="text-[10px] uppercase tracking-widest text-brand-teal font-bold">Proposal Mode</span>
               <span className="text-[11px] font-semibold text-white font-sans bg-brand-purple/20 border border-brand-purple/40 px-3 py-1 rounded-full">
-                Custom Quote Pending
+                Enquiry Active
               </span>
             </div>
           </div>
@@ -1224,35 +1095,6 @@ function ContactPlannerContainer() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
-  // Reset fields function
-  const resetAllFields = () => {
-    setShowSuccess(false);
-    setStep(1);
-    setCategory("");
-    setFullName("");
-    setEmail("");
-    setPhone("");
-    setWeddingDate("");
-    setWeddingVenue("");
-    setEngagementDate("");
-    setEngagementVenue("");
-    setPreWedding({
-      shoot1Photo: false,
-      shoot1Video: false,
-      shoot2Photo: false,
-      shoot2Video: false
-    });
-    setDeliverables({
-      album1: false,
-      album2: false,
-      highlights1: false,
-      highlights2: false,
-      documentary: false,
-      reels: false
-    });
-    setErrors([]);
-  };
-
   useEffect(() => {
     if (!category) return;
     
@@ -1284,8 +1126,6 @@ function ContactPlannerContainer() {
     setAdditionalServices(initialServices);
   }, [category]);
 
-  // Always start at Step 1 to allow the user to select their wedding tradition (Christian, Hindu, Muslim)
-
   const handleEventToggle = (evtKey: string, type: "photo" | "video") => {
     setEvents((prev) => ({
       ...prev,
@@ -1306,35 +1146,6 @@ function ContactPlannerContainer() {
     }));
   };
 
-  const calculateTotal = () => {
-    let total = 0;
-    
-    Object.values(events).forEach((evt) => {
-      if (evt.photo) total += 15000;
-      if (evt.video) total += 18000;
-    });
-
-    if (preWedding.shoot1Photo) total += 20000;
-    if (preWedding.shoot1Video) total += 25000;
-    if (preWedding.shoot2Photo) total += 20000;
-    if (preWedding.shoot2Video) total += 25000;
-
-    if (deliverables.album1) total += 12000;
-    if (deliverables.album2) total += 10000;
-    if (deliverables.highlights1) total += 15000;
-    if (deliverables.highlights2) total += 12000;
-    if (deliverables.documentary) total += 25000;
-    if (deliverables.reels) total += 5000;
-
-    Object.values(additionalServices).forEach((srv) => {
-      if (srv.helicam) total += 12000;
-      if (srv.live) total += 10000;
-      if (srv.spotEdit) total += 15000;
-    });
-
-    return total;
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
       {!showSuccess && (
@@ -1346,7 +1157,6 @@ function ContactPlannerContainer() {
           preWedding={preWedding}
           deliverables={deliverables}
           additionalServices={additionalServices}
-          calculateTotal={calculateTotal}
         />
       )}
       <div className={showSuccess ? "lg:col-span-12 w-full flex justify-center" : "lg:col-span-8"}>
@@ -1377,7 +1187,6 @@ function ContactPlannerContainer() {
           deliverables={deliverables}
           setDeliverables={setDeliverables}
           additionalServices={additionalServices}
-          calculateTotal={calculateTotal}
           isSubmitting={isSubmitting}
           setIsSubmitting={setIsSubmitting}
           showSuccess={showSuccess}
@@ -1386,7 +1195,6 @@ function ContactPlannerContainer() {
           setErrors={setErrors}
           handleEventToggle={handleEventToggle}
           handleServiceToggle={handleServiceToggle}
-          resetAllFields={resetAllFields}
         />
       </div>
     </div>

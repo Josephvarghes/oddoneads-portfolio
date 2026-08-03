@@ -17,10 +17,12 @@ import {
   ChevronDown, 
   ChevronUp, 
   FileText,
-  Check,
   AlertCircle,
   ShieldCheck,
-  DollarSign
+  MapPin,
+  Clock,
+  Sparkles,
+  Inbox
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -67,7 +69,19 @@ interface Booking {
   preWedding: PreWeddingSelection;
   deliverables: DeliverableSelection;
   additionalServices: Record<string, AdditionalService>;
-  totalPrice: number;
+  createdAt: string;
+}
+
+// Contact Request Interface
+interface ContactRequest {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  eventType: string;
+  eventDate: string;
+  eventLocation: string;
+  message: string;
   createdAt: string;
 }
 
@@ -91,6 +105,13 @@ const EVENT_LABELS: Record<string, string> = {
   "muslim-reception": "Wedding Reception Party"
 };
 
+const EVENT_TYPE_LABELS: Record<string, string> = {
+  "wedding-photography": "Wedding Photography",
+  "wedding-films": "Wedding Films",
+  "destination-weddings": "Destination Wedding",
+  "pre-wedding": "Pre-Wedding Shoot"
+};
+
 export default function AdminPortal() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -99,10 +120,16 @@ export default function AdminPortal() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   
+  // Dashboard Section Tabs: "bookings" (Wedding Enquiries) or "contacts" (Simple Contact Requests)
+  const [activeTab, setActiveTab] = useState<"bookings" | "contacts">("bookings");
+
   // Bookings list state
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>("all");
+
+  // Contact requests list state
+  const [contacts, setContacts] = useState<ContactRequest[]>([]);
 
   // Hydration safeguard and session auth check
   useEffect(() => {
@@ -114,8 +141,10 @@ export default function AdminPortal() {
   // Seed sample mock data on first load if localStorage database is empty
   useEffect(() => {
     if (!mounted) return;
-    const existing = localStorage.getItem("oddone_bookings");
-    if (!existing || JSON.parse(existing).length === 0) {
+    
+    // 1. Seed Bookings
+    const existingBookings = localStorage.getItem("oddone_bookings");
+    if (!existingBookings || JSON.parse(existingBookings).length === 0) {
       const mockBookings: Booking[] = [
         {
           id: "book-mock-1",
@@ -156,7 +185,6 @@ export default function AdminPortal() {
             "wedding-eve": { helicam: false, live: false, spotEdit: false },
             "wedding-day": { helicam: true, live: true, spotEdit: true }
           },
-          totalPrice: 284000,
           createdAt: "2026-06-24T12:00:00.000Z"
         },
         {
@@ -197,7 +225,6 @@ export default function AdminPortal() {
             "wedding-day": { helicam: true, live: false, spotEdit: false },
             "reception-day": { helicam: false, live: true, spotEdit: false }
           },
-          totalPrice: 198000,
           createdAt: "2026-06-23T15:30:00.000Z"
         },
         {
@@ -238,14 +265,46 @@ export default function AdminPortal() {
             "nikkah-day": { helicam: true, live: true, spotEdit: false },
             "muslim-reception": { helicam: false, live: true, spotEdit: true }
           },
-          totalPrice: 322000,
           createdAt: "2026-06-22T08:45:00.000Z"
         }
       ];
       localStorage.setItem("oddone_bookings", JSON.stringify(mockBookings));
       setBookings(mockBookings);
     } else {
-      setBookings(JSON.parse(existing));
+      setBookings(JSON.parse(existingBookings));
+    }
+
+    // 2. Seed Contact Requests
+    const existingContacts = localStorage.getItem("oddone_contacts");
+    if (!existingContacts || JSON.parse(existingContacts).length === 0) {
+      const mockContacts: ContactRequest[] = [
+        {
+          id: "contact-mock-1",
+          fullName: "Vikram & Ananya Sethi",
+          email: "ananya.sethi@gmail.com",
+          phone: "+919820123456",
+          eventType: "wedding-photography",
+          eventDate: "2026-12-10",
+          eventLocation: "Udaipur, Rajasthan",
+          message: "We love your visual documentary style! We're planning a 3-day royal palace wedding in Udaipur and would love to check your team's availability and review proposal options.",
+          createdAt: "2026-06-25T10:15:00.000Z"
+        },
+        {
+          id: "contact-mock-2",
+          fullName: "Daniel & Priya Sharma",
+          email: "daniel.priya@outlook.com",
+          phone: "+447700900077",
+          eventType: "destination-weddings",
+          eventDate: "2027-02-14",
+          eventLocation: "Leela Kovalam, Kerala",
+          message: "Hi team, we are based in London and organizing a luxury cliffside destination wedding in Kovalam. We would love a call to discuss multi-cam cinematic film options.",
+          createdAt: "2026-06-24T18:30:00.000Z"
+        }
+      ];
+      localStorage.setItem("oddone_contacts", JSON.stringify(mockContacts));
+      setContacts(mockContacts);
+    } else {
+      setContacts(JSON.parse(existingContacts));
     }
   }, [mounted]);
 
@@ -272,28 +331,62 @@ export default function AdminPortal() {
 
   // Delete booking handler
   const handleDeleteBooking = (id: string) => {
-    if (!confirm("Are you sure you want to delete this booking entry?")) return;
+    if (!confirm("Are you sure you want to delete this wedding enquiry entry?")) return;
     const list = bookings.filter((b) => b.id !== id);
     setBookings(list);
     localStorage.setItem("oddone_bookings", JSON.stringify(list));
     if (expandedId === id) setExpandedId(null);
   };
 
-  // Calculates stats metrics
+  // Delete contact request handler
+  const handleDeleteContact = (id: string) => {
+    if (!confirm("Are you sure you want to delete this contact request entry?")) return;
+    const list = contacts.filter((c) => c.id !== id);
+    setContacts(list);
+    localStorage.setItem("oddone_contacts", JSON.stringify(list));
+  };
+
+  // Analytics metrics
   const getAnalytics = () => {
-    const total = bookings.length;
-    const revenue = bookings.reduce((sum, item) => sum + item.totalPrice, 0);
+    const totalBookings = bookings.length;
+    const totalContacts = contacts.length;
     const christian = bookings.filter(b => b.category === "christian").length;
     const hindu = bookings.filter(b => b.category === "hindu").length;
     const muslim = bookings.filter(b => b.category === "muslim").length;
-    return { total, revenue, christian, hindu, muslim };
+    return { totalBookings, totalContacts, christian, hindu, muslim };
   };
 
   const stats = getAnalytics();
 
-  // Export spreadsheet as BOM-prefixed CSV (Excel readable)
+  // Export spreadsheet as BOM-prefixed CSV
   const handleExportCSV = () => {
-    let csvContent = "ID,Couple Name,Email,Phone,Category,Wedding Date,Wedding Venue,Engagement Date,Engagement Venue,Events Covered,Pre-Wedding Sessions,Deliverables,Additional Upgrades,Estimated Quote (INR),Created At\r\n";
+    if (activeTab === "contacts") {
+      let csvContent = "ID,Full Name,Email,Phone,Event Type,Event Date,Event Location,Message,Created At\r\n";
+      contacts.forEach((c) => {
+        const row = [
+          c.id,
+          `"${c.fullName.replace(/"/g, '""')}"`,
+          c.email,
+          `"${c.phone}"`,
+          `"${EVENT_TYPE_LABELS[c.eventType] || c.eventType}"`,
+          c.eventDate,
+          `"${c.eventLocation.replace(/"/g, '""')}"`,
+          `"${c.message.replace(/"/g, '""')}"`,
+          c.createdAt
+        ].join(",");
+        csvContent += row + "\r\n";
+      });
+      const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", `oddone_contact_requests_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
+    let csvContent = "ID,Couple Name,Email,Phone,Category,Wedding Date,Wedding Venue,Engagement Date,Engagement Venue,Events Covered,Pre-Wedding Sessions,Deliverables,Additional Upgrades,Created At\r\n";
     
     bookings.forEach((b) => {
       const activeEvts: string[] = [];
@@ -355,7 +448,6 @@ export default function AdminPortal() {
         `"${preWedsStr.replace(/"/g, '""')}"`,
         `"${delivsStr.replace(/"/g, '""')}"`,
         `"${upgradesStr.replace(/"/g, '""')}"`,
-        b.totalPrice,
         b.createdAt
       ].join(",");
       csvContent += row + "\r\n";
@@ -364,7 +456,7 @@ export default function AdminPortal() {
     const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `oddone_bookings_export_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute("download", `oddone_wedding_enquiries_${new Date().toISOString().slice(0,10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -388,7 +480,7 @@ export default function AdminPortal() {
       muslim: "Muslim Wedding"
     };
 
-    let msg = `*ODD_ONE_ADS WEDDINGS - BOOKING SUMMARY*\n`;
+    let msg = `*ODD_ONE_ADS WEDDINGS - WEDDING ENQUIRY SUMMARY*\n`;
     msg += `-------------------------------------------\n`;
     msg += `*Couple Name:* ${b.fullName}\n`;
     msg += `*Category:* ${categoriesDisplay[b.category] || b.category}\n`;
@@ -403,8 +495,7 @@ export default function AdminPortal() {
     }
     
     msg += `-------------------------------------------\n`;
-    msg += `*Estimated Quotation Total:* ₹${b.totalPrice.toLocaleString()}\n`;
-    msg += `*Generated On:* ${new Date(b.createdAt).toLocaleDateString()}\n`;
+    msg += `*Submitted On:* ${new Date(b.createdAt).toLocaleDateString()}\n`;
 
     const encoded = encodeURIComponent(msg);
     window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
@@ -516,7 +607,7 @@ export default function AdminPortal() {
   return (
     <div className="pt-28 pb-24 min-h-screen bg-slate-50 text-slate-900 relative font-sans print:bg-white print:text-black print:pt-4 print:pb-4">
       
-      {/* A. PRINT ONLY INVOICE / RECEIPT GENERATOR CONTAINER */}
+      {/* A. PRINT ONLY SUMMARY RECEIPT GENERATOR CONTAINER */}
       <div className="hidden print:block max-w-4xl mx-auto p-4 bg-white text-slate-900 font-sans leading-relaxed">
         {expandedId ? (
           (() => {
@@ -530,7 +621,7 @@ export default function AdminPortal() {
                     <span className="text-[9px] uppercase tracking-widest text-slate-500 font-semibold block mt-0.5">PHOTOGRAPHY & WEDDING FILMS</span>
                   </div>
                   <div className="text-right">
-                    <h2 className="text-lg font-bold uppercase tracking-wider text-slate-700">Booking Invoice</h2>
+                    <h2 className="text-lg font-bold uppercase tracking-wider text-slate-700">Wedding Enquiry Summary</h2>
                     <span className="text-xs text-slate-500 block">ID: {selected.id}</span>
                     <span className="text-[10px] text-slate-400 block">Date: {new Date(selected.createdAt).toLocaleDateString()}</span>
                   </div>
@@ -561,8 +652,7 @@ export default function AdminPortal() {
                   <table className="w-full text-xs text-left border-collapse">
                     <thead>
                       <tr className="border-b-2 border-slate-300 font-bold uppercase text-[9px] tracking-wider text-slate-600">
-                        <th className="py-2">Description of Services</th>
-                        <th className="py-2 text-right">Rate (INR)</th>
+                        <th className="py-2">Selected Services Breakdown</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -570,13 +660,11 @@ export default function AdminPortal() {
                         const sel = selected.events[key];
                         if (!sel.photo && !sel.video) return null;
                         const services = [];
-                        let rate = 0;
-                        if (sel.photo) { services.push("Photography"); rate += 15000; }
-                        if (sel.video) { services.push("Videography"); rate += 18000; }
+                        if (sel.photo) { services.push("Photography"); }
+                        if (sel.video) { services.push("Videography"); }
                         return (
                           <tr key={key} className="border-b border-slate-200">
                             <td className="py-2.5 font-medium">{EVENT_LABELS[key] || key} coverage - <span className="text-slate-500 font-light italic">{services.join(" & ")}</span></td>
-                            <td className="py-2.5 text-right">₹{rate.toLocaleString()}</td>
                           </tr>
                         );
                       })}
@@ -584,25 +672,21 @@ export default function AdminPortal() {
                       {selected.preWedding.shoot1Photo && (
                         <tr className="border-b border-slate-200">
                           <td className="py-2.5 font-medium">Pre-Wedding Session 1 (Photography)</td>
-                          <td className="py-2.5 text-right">₹20,000</td>
                         </tr>
                       )}
                       {selected.preWedding.shoot1Video && (
                         <tr className="border-b border-slate-200">
                           <td className="py-2.5 font-medium">Pre-Wedding Session 1 (Videography)</td>
-                          <td className="py-2.5 text-right">₹25,000</td>
                         </tr>
                       )}
                       {selected.preWedding.shoot2Photo && (
                         <tr className="border-b border-slate-200">
                           <td className="py-2.5 font-medium">Pre-Wedding Session 2 (Photography)</td>
-                          <td className="py-2.5 text-right">₹20,000</td>
                         </tr>
                       )}
                       {selected.preWedding.shoot2Video && (
                         <tr className="border-b border-slate-200">
                           <td className="py-2.5 font-medium">Pre-Wedding Session 2 (Videography)</td>
-                          <td className="py-2.5 text-right">₹25,000</td>
                         </tr>
                       )}
 
@@ -615,18 +699,9 @@ export default function AdminPortal() {
                           documentary: "Full Length Film Documentary (30 to 45 Min)",
                           reels: "Teaser Instagram Reels (30 Sec)"
                         };
-                        const rates: Record<string, number> = {
-                          album1: 12000,
-                          album2: 10000,
-                          highlights1: 15000,
-                          highlights2: 12000,
-                          documentary: 25000,
-                          reels: 5000
-                        };
                         return (
                           <tr key={k} className="border-b border-slate-200">
                             <td className="py-2.5 font-medium">{deliverableLabels[k] || k}</td>
-                            <td className="py-2.5 text-right">₹{rates[k].toLocaleString()}</td>
                           </tr>
                         );
                       })}
@@ -634,22 +709,16 @@ export default function AdminPortal() {
                       {Object.keys(selected.additionalServices).map((dayKey) => {
                         const srv = selected.additionalServices[dayKey];
                         const rows = [];
-                        if (srv.helicam) rows.push({ label: "Helicam swept", rate: 12000 });
-                        if (srv.live) rows.push({ label: "YouTube Livestream", rate: 10000 });
-                        if (srv.spotEdit) rows.push({ label: "Same Day Spot Video edit", rate: 15000 });
+                        if (srv.helicam) rows.push("Helicam swept");
+                        if (srv.live) rows.push("YouTube Livestream");
+                        if (srv.spotEdit) rows.push("Same Day Spot Video edit");
                         
                         return rows.map((r, i) => (
                           <tr key={`${dayKey}-${i}`} className="border-b border-slate-200">
-                            <td className="py-2.5 font-medium">{r.label} on {getServiceDayLabel(dayKey)}</td>
-                            <td className="py-2.5 text-right">₹{r.rate.toLocaleString()}</td>
+                            <td className="py-2.5 font-medium">{r} on {getServiceDayLabel(dayKey)}</td>
                           </tr>
                         ));
                       })}
-
-                      <tr className="border-t-2 border-slate-900 font-extrabold text-sm text-slate-900">
-                        <td className="py-4">Grand Total Invoice</td>
-                        <td className="py-4 text-right text-lg">₹{selected.totalPrice.toLocaleString()}</td>
-                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -661,7 +730,7 @@ export default function AdminPortal() {
             <div className="flex justify-between items-center border-b pb-4">
               <div>
                 <h1 className="text-2xl font-bold">ODD_ONE_ADS WEDDINGS</h1>
-                <span className="text-[10px] text-slate-500">STAFF ALL BOOKINGS SUMMARY</span>
+                <span className="text-[10px] text-slate-500">STAFF ALL ENQUIRIES SUMMARY</span>
               </div>
               <span className="text-xs text-slate-500">Date: {new Date().toLocaleDateString()}</span>
             </div>
@@ -673,7 +742,6 @@ export default function AdminPortal() {
                   <th className="py-2">Category</th>
                   <th className="py-2">Wedding Date & Venue</th>
                   <th className="py-2">Contact Details</th>
-                  <th className="py-2 text-right">Total Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -689,7 +757,6 @@ export default function AdminPortal() {
                       <span className="block">{b.email}</span>
                       <span className="text-slate-500 block">{b.phone}</span>
                     </td>
-                    <td className="py-3 text-right font-bold">₹{b.totalPrice.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -698,18 +765,18 @@ export default function AdminPortal() {
         )}
       </div>
 
-      {/* B. MAIN CORE WORKSPACE DASHBOARD (Clean Professional White Theme) */}
+      {/* B. MAIN CORE WORKSPACE DASHBOARD */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 print:hidden">
         
-        {/* Top Professional Header Bar */}
+        {/* Top Header Bar */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-6 md:p-8 mb-8 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[10px] tracking-[0.25em] text-indigo-600 uppercase font-bold">Staff Management Dashboard</span>
             </div>
-            <h1 className="font-serif text-2xl md:text-3xl font-bold text-slate-900">Client Bookings & Overview</h1>
-            <p className="text-xs text-slate-500 font-medium mt-1">Easily analyze planner submissions, review event breakdowns, and dispatch client quotes.</p>
+            <h1 className="font-serif text-2xl md:text-3xl font-bold text-slate-900">Inquiries & Client Overview</h1>
+            <p className="text-xs text-slate-500 font-medium mt-1">Review wedding planner enquiries and direct contact messages in one place.</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -728,7 +795,7 @@ export default function AdminPortal() {
               className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all cursor-pointer rounded-xl shadow-2xs"
             >
               <Printer size={14} className="text-slate-500" />
-              Print PDF
+              Print Summary
             </button>
 
             <button 
@@ -741,28 +808,38 @@ export default function AdminPortal() {
           </div>
         </div>
 
-        {/* High-Contrast Analytics Metrics Cards */}
+        {/* Analytics Overview Metrics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           
-          {/* Total Clients Card */}
-          <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+          {/* Total Wedding Enquiries */}
+          <div 
+            onClick={() => setActiveTab("bookings")}
+            className={`bg-white border p-5 rounded-2xl shadow-sm flex items-center gap-4 cursor-pointer transition-all ${
+              activeTab === "bookings" ? "border-indigo-600 ring-2 ring-indigo-600/10 shadow-md" : "border-slate-200/80 hover:shadow-md"
+            }`}
+          >
             <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
               <Users size={22} />
             </div>
             <div>
-              <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Clients</span>
-              <span className="block font-serif text-2xl font-bold text-slate-900 mt-0.5">{stats.total} Entries</span>
+              <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Wedding Enquiries</span>
+              <span className="block font-serif text-2xl font-bold text-slate-900 mt-0.5">{stats.totalBookings} Entries</span>
             </div>
           </div>
 
-          {/* Revenue Card */}
-          <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+          {/* Simple Contact Requests Card */}
+          <div 
+            onClick={() => setActiveTab("contacts")}
+            className={`bg-white border p-5 rounded-2xl shadow-sm flex items-center gap-4 cursor-pointer transition-all ${
+              activeTab === "contacts" ? "border-indigo-600 ring-2 ring-indigo-600/10 shadow-md" : "border-slate-200/80 hover:shadow-md"
+            }`}
+          >
             <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
-              <DollarSign size={22} />
+              <Inbox size={22} />
             </div>
             <div>
-              <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Projected Revenue</span>
-              <span className="block font-serif text-2xl font-bold text-emerald-700 mt-0.5">₹{stats.revenue.toLocaleString()}</span>
+              <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Contact Requests</span>
+              <span className="block font-serif text-2xl font-bold text-emerald-700 mt-0.5">{stats.totalContacts} Messages</span>
             </div>
           </div>
 
@@ -772,7 +849,7 @@ export default function AdminPortal() {
               ✙
             </div>
             <div>
-              <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Christian Weddings</span>
+              <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Christian Tradition</span>
               <span className="block font-serif text-2xl font-bold text-slate-900 mt-0.5">{stats.christian}</span>
             </div>
           </div>
@@ -790,329 +867,484 @@ export default function AdminPortal() {
 
         </div>
 
-        {/* Filter Categories Tab Bar */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-4 mb-6 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            {[
-              { id: "all", label: "All Submissions" },
-              { id: "christian", label: "Christian ✙" },
-              { id: "hindu", label: "Hindu ॐ" },
-              { id: "muslim", label: "Muslim ☪" }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => { setActiveCategoryFilter(tab.id); setExpandedId(null); }}
-                className={`px-4 py-2 text-xs font-bold rounded-xl cursor-pointer transition-all border ${
-                  activeCategoryFilter === tab.id
-                    ? "bg-slate-900 border-slate-900 text-white shadow-xs"
-                    : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+        {/* Primary View Selector Tabs (Wedding Enquiries vs Simple Contact Requests) */}
+        <div className="flex border-b border-slate-200 mb-6 gap-8 text-sm font-bold">
+          <button
+            onClick={() => setActiveTab("bookings")}
+            className={`pb-3 border-b-2 flex items-center gap-2 transition-colors cursor-pointer ${
+              activeTab === "bookings"
+                ? "border-indigo-600 text-indigo-600 font-extrabold"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Sparkles size={16} />
+            Wedding Details Enquiries ({bookings.length})
+          </button>
           
-          <span className="text-xs text-slate-500 font-medium">
-            Showing <strong className="text-slate-800">{filteredBookings.length}</strong> of {bookings.length} total entries
-          </span>
+          <button
+            onClick={() => setActiveTab("contacts")}
+            className={`pb-3 border-b-2 flex items-center gap-2 transition-colors cursor-pointer ${
+              activeTab === "contacts"
+                ? "border-indigo-600 text-indigo-600 font-extrabold"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Mail size={16} />
+            Contact Requests ({contacts.length})
+          </button>
         </div>
 
-        {/* BOOKINGS LIST MATRIX */}
-        {filteredBookings.length === 0 ? (
-          <div className="bg-white border border-slate-200/80 p-12 text-center rounded-2xl shadow-sm">
-            <FileText size={44} className="text-slate-300 mx-auto mb-4" />
-            <h4 className="font-serif text-lg font-bold text-slate-800 mb-1">No bookings match the selected filter</h4>
-            <p className="text-xs text-slate-500 font-medium max-w-xs mx-auto">Create a new booking using the interactive planner on the site.</p>
-          </div>
-        ) : (
-          <div className="space-y-4 font-sans">
-            <AnimatePresence>
-              {filteredBookings.map((b) => {
-                const isExpanded = expandedId === b.id;
-                const cleanPhone = b.phone.replace(/[^0-9+]/g, "");
-
-                // Category badge colors
-                let categoryBadgeClass = "bg-purple-50 text-purple-700 border-purple-200";
-                if (b.category === "hindu") categoryBadgeClass = "bg-amber-50 text-amber-700 border-amber-200";
-                if (b.category === "muslim") categoryBadgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                
-                return (
-                  <motion.div 
-                    key={b.id}
-                    layout="position"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.3 }}
-                    className={`bg-white border rounded-2xl overflow-hidden transition-all duration-300 shadow-2xs ${
-                      isExpanded 
-                        ? "border-indigo-600 shadow-md ring-2 ring-indigo-600/10" 
-                        : "border-slate-200 hover:border-slate-300 hover:shadow-xs"
+        {/* SECTION 1: WEDDING DETAILS ENQUIRIES TAB */}
+        {activeTab === "bookings" && (
+          <div>
+            {/* Filter Categories Tab Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 mb-6 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                {[
+                  { id: "all", label: "All Submissions" },
+                  { id: "christian", label: "Christian ✙" },
+                  { id: "hindu", label: "Hindu ॐ" },
+                  { id: "muslim", label: "Muslim ☪" }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => { setActiveCategoryFilter(tab.id); setExpandedId(null); }}
+                    className={`px-4 py-2 text-xs font-bold rounded-xl cursor-pointer transition-all border ${
+                      activeCategoryFilter === tab.id
+                        ? "bg-slate-900 border-slate-900 text-white shadow-xs"
+                        : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   >
-                    {/* Basic Summary Row */}
-                    <div 
-                      onClick={() => setExpandedId(isExpanded ? null : b.id)}
-                      className="p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/60 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-11 h-11 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-lg font-serif font-black flex-shrink-0 text-slate-800">
-                          {b.category === "christian" && "✙"}
-                          {b.category === "hindu" && "ॐ"}
-                          {b.category === "muslim" && "☪"}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-3">
-                            <h3 className="font-serif text-lg font-bold text-slate-900">
-                              {b.fullName}
-                            </h3>
-                            <span className={`px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold rounded-md border ${categoryBadgeClass}`}>
-                              {b.category}
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-500 font-medium flex items-center gap-2 mt-1">
-                            <span className="flex items-center gap-1"><Calendar size={12} className="text-slate-400" /> {b.weddingDate}</span>
-                            <span>&bull;</span>
-                            <span className="truncate max-w-[260px] text-slate-600">{b.weddingVenue}</span>
-                          </p>
-                        </div>
-                      </div>
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              
+              <span className="text-xs text-slate-500 font-medium">
+                Showing <strong className="text-slate-800">{filteredBookings.length}</strong> of {bookings.length} entries
+              </span>
+            </div>
 
-                      <div className="flex items-center gap-6">
-                        <div className="text-right md:block hidden">
-                          <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Estimated Quote</span>
-                          <span className="block font-mono text-slate-900 font-bold text-base">₹{b.totalPrice.toLocaleString()}</span>
-                        </div>
+            {/* BOOKINGS LIST MATRIX */}
+            {filteredBookings.length === 0 ? (
+              <div className="bg-white border border-slate-200/80 p-12 text-center rounded-2xl shadow-sm">
+                <FileText size={44} className="text-slate-300 mx-auto mb-4" />
+                <h4 className="font-serif text-lg font-bold text-slate-800 mb-1">No wedding enquiries match the filter</h4>
+                <p className="text-xs text-slate-500 font-medium max-w-xs mx-auto">New enquiries submitted via the booking planner will appear here.</p>
+              </div>
+            ) : (
+              <div className="space-y-4 font-sans">
+                <AnimatePresence>
+                  {filteredBookings.map((b) => {
+                    const isExpanded = expandedId === b.id;
+                    const cleanPhone = b.phone.replace(/[^0-9+]/g, "");
 
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all ${
+                    let categoryBadgeClass = "bg-purple-50 text-purple-700 border-purple-200";
+                    if (b.category === "hindu") categoryBadgeClass = "bg-amber-50 text-amber-700 border-amber-200";
+                    if (b.category === "muslim") categoryBadgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                    
+                    return (
+                      <motion.div 
+                        key={b.id}
+                        layout="position"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.3 }}
+                        className={`bg-white border rounded-2xl overflow-hidden transition-all duration-300 shadow-2xs ${
                           isExpanded 
-                            ? "bg-indigo-600 text-white border-indigo-600" 
-                            : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
-                        }`}>
-                          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Detailed Card Expanded Segment */}
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div 
-                          initial={{ height: 0 }}
-                          animate={{ height: "auto" }}
-                          exit={{ height: 0 }}
-                          className="border-t border-slate-200 bg-slate-50/70 overflow-hidden font-sans"
+                            ? "border-indigo-600 shadow-md ring-2 ring-indigo-600/10" 
+                            : "border-slate-200 hover:border-slate-300 hover:shadow-xs"
+                        }`}
+                      >
+                        {/* Summary Row */}
+                        <div 
+                          onClick={() => setExpandedId(isExpanded ? null : b.id)}
+                          className="p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/60 transition-colors"
                         >
-                          <div className="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 text-xs font-medium">
-                            
-                            {/* Left detailed breakdown column */}
-                            <div className="lg:col-span-8 space-y-5">
-                              
-                              {/* Contact & Venue information grid */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                
-                                {/* Contact Card */}
-                                <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 shadow-2xs">
-                                  <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
-                                    Client Information
-                                  </span>
-                                  <div>
-                                    <span className="text-slate-400 block text-[10px]">Email Address</span>
-                                    <a href={`mailto:${b.email}`} className="text-slate-800 font-semibold hover:text-indigo-600 transition-colors block">{b.email}</a>
-                                  </div>
-                                  <div>
-                                    <span className="text-slate-400 block text-[10px]">Phone Contact</span>
-                                    <a href={`tel:${cleanPhone}`} className="text-slate-800 font-semibold hover:text-indigo-600 transition-colors block">{b.phone}</a>
-                                  </div>
-                                </div>
-
-                                {/* Venue Card */}
-                                <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 shadow-2xs">
-                                  <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
-                                    Event Locations
-                                  </span>
-                                  <div>
-                                    <span className="text-slate-400 block text-[10px]">Wedding Location</span>
-                                    <span className="text-slate-800 font-semibold block">{b.weddingVenue}</span>
-                                  </div>
-                                  {b.hasEngagement && (
-                                    <div>
-                                      <span className="text-slate-400 block text-[10px]">Engagement Location</span>
-                                      <span className="text-slate-800 font-semibold block">{b.engagementVenue} ({b.engagementDate})</span>
-                                    </div>
-                                  )}
-                                </div>
-
-                              </div>
-
-                              {/* Ceremonies Covered & Upgrades */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                
-                                {/* Ceremony matrix */}
-                                <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2.5 shadow-2xs">
-                                  <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
-                                    Ceremony Days Coverage
-                                  </span>
-                                  <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
-                                    {renderCheckSummary(b).map((val, i) => (
-                                      <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200/60 rounded-lg text-slate-700 text-xs">
-                                        <Check size={12} className="text-emerald-600 stroke-[3]" />
-                                        <span>{val}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {/* Pre-wedding & Deliverables */}
-                                <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-2xs">
-                                  {/* Prewedding */}
-                                  {[
-                                    b.preWedding.shoot1Photo, b.preWedding.shoot1Video,
-                                    b.preWedding.shoot2Photo, b.preWedding.shoot2Video
-                                  ].some(Boolean) && (
-                                    <div className="space-y-1.5">
-                                      <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block">Pre-Wedding Shoots</span>
-                                      <div className="flex flex-wrap gap-1.5">
-                                        {b.preWedding.shoot1Photo && <span className="px-2 py-0.5 text-[10px] bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded">Session 1 Photo</span>}
-                                        {b.preWedding.shoot1Video && <span className="px-2 py-0.5 text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded">Session 1 Video</span>}
-                                        {b.preWedding.shoot2Photo && <span className="px-2 py-0.5 text-[10px] bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded">Session 2 Photo</span>}
-                                        {b.preWedding.shoot2Video && <span className="px-2 py-0.5 text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded">Session 2 Video</span>}
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {/* Deliverables */}
-                                  <div className="space-y-1.5">
-                                    <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block">Deliverables Selected</span>
-                                    <div className="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto pr-1">
-                                      {Object.keys(b.deliverables).filter(k => b.deliverables[k as keyof DeliverableSelection]).map((k) => {
-                                        const labels: Record<string, string> = {
-                                          album1: "Album 1",
-                                          album2: "Album 2",
-                                          highlights1: "Highlights 1",
-                                          highlights2: "Highlights 2",
-                                          documentary: "Full Film",
-                                          reels: "Teaser Reels"
-                                        };
-                                        return (
-                                          <span key={k} className="px-2 py-0.5 text-[10px] bg-slate-100 border border-slate-200 text-slate-800 font-medium rounded">
-                                            {labels[k]}
-                                          </span>
-                                        );
-                                      })}
-                                    </div>
-                                  </div>
-                                </div>
-
-                              </div>
-
-                              {/* Additional Upgrades Matrix */}
-                              {Object.keys(b.additionalServices).some(dayKey => Object.values(b.additionalServices[dayKey]).some(Boolean)) && (
-                                <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 shadow-2xs">
-                                  <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
-                                    Production Upgrades Matrix
-                                  </span>
-                                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                                    {Object.keys(b.additionalServices).map((dayKey) => {
-                                      const srv = b.additionalServices[dayKey];
-                                      const activeSrvs = [
-                                        srv.helicam && "Drone",
-                                        srv.live && "Live Stream",
-                                        srv.spotEdit && "Spot Edit"
-                                      ].filter(Boolean);
-                                      if (activeSrvs.length === 0) return null;
-                                      return (
-                                        <div key={dayKey} className="p-2 bg-slate-50 border border-slate-200 rounded-lg">
-                                          <span className="block text-xs font-bold text-slate-800 capitalize truncate">{getServiceDayLabel(dayKey)}</span>
-                                          <span className="block text-[10px] text-indigo-600 font-semibold">{activeSrvs.join(" / ")}</span>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              )}
-
+                          <div className="flex items-center gap-4">
+                            <div className="w-11 h-11 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-lg font-serif font-black flex-shrink-0 text-slate-800">
+                              {b.category === "christian" && "✙"}
+                              {b.category === "hindu" && "ॐ"}
+                              {b.category === "muslim" && "☪"}
                             </div>
-
-                            {/* Right Client Actions & Quote Card */}
-                            <div className="lg:col-span-4 bg-white border border-slate-200 p-5 rounded-xl shadow-2xs flex flex-col justify-between h-auto min-h-[280px]">
-                              <div>
-                                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block border-b border-slate-100 pb-2 mb-3">Calculated Quotation</span>
-                                <div className="mb-4">
-                                  <span className="block text-3xl font-mono font-black text-slate-900">₹{b.totalPrice.toLocaleString()}</span>
-                                  <span className="text-[10px] text-slate-400 font-medium block mt-0.5">Recorded on: {new Date(b.createdAt).toLocaleDateString()}</span>
-                                </div>
+                            <div>
+                              <div className="flex items-center gap-3">
+                                <h3 className="font-serif text-lg font-bold text-slate-900">
+                                  {b.fullName}
+                                </h3>
+                                <span className={`px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold rounded-md border ${categoryBadgeClass}`}>
+                                  {b.category}
+                                </span>
                               </div>
-
-                              {/* Communications & Share Actions */}
-                              <div className="space-y-2.5 pt-4 border-t border-slate-100">
-                                <div className="grid grid-cols-3 gap-2">
-                                  <a 
-                                    href={`tel:${cleanPhone}`} 
-                                    className="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center font-bold text-xs transition-colors"
-                                    title="Call Client"
-                                  >
-                                    <Phone size={14} />
-                                  </a>
-                                  
-                                  <a 
-                                    href={`mailto:${b.email}?subject=Odd_One_Ads%20Wedding%20Booking%20Consultation`} 
-                                    className="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center font-bold text-xs transition-colors"
-                                    title="Send Email"
-                                  >
-                                    <Mail size={14} />
-                                  </a>
-
-                                  <a 
-                                    href={`https://wa.me/${cleanPhone.replace("+", "")}?text=${encodeURIComponent("Greetings from Odd_One_Ads weddings team. We received your booking request! Let's arrange a call.")}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl flex items-center justify-center font-bold text-xs transition-colors"
-                                    title="WhatsApp Chat"
-                                  >
-                                    <MessageSquare size={14} />
-                                  </a>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-2">
-                                  <button 
-                                    type="button"
-                                    onClick={() => handleWhatsAppShare(b)}
-                                    className="py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                                  >
-                                    <Share2 size={12} /> Share
-                                  </button>
-
-                                  <button 
-                                    type="button"
-                                    onClick={() => handlePrint(b.id)}
-                                    className="py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                                  >
-                                    <Printer size={12} /> Invoice
-                                  </button>
-                                </div>
-
-                                <button 
-                                  type="button"
-                                  onClick={() => handleDeleteBooking(b.id)}
-                                  className="w-full py-2.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-colors mt-1"
-                                >
-                                  <Trash2 size={13} /> Delete Entry
-                                </button>
-                              </div>
+                              <p className="text-xs text-slate-500 font-medium flex items-center gap-2 mt-1">
+                                <span className="flex items-center gap-1"><Calendar size={12} className="text-slate-400" /> {b.weddingDate}</span>
+                                <span>&bull;</span>
+                                <span className="truncate max-w-[260px] text-slate-600">{b.weddingVenue}</span>
+                              </p>
                             </div>
-
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+
+                          <div className="flex items-center gap-4">
+                            <span className="text-[11px] text-slate-400 font-medium">
+                              Submitted {new Date(b.createdAt).toLocaleDateString()}
+                            </span>
+
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all ${
+                              isExpanded 
+                                ? "bg-indigo-600 text-white border-indigo-600" 
+                                : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+                            }`}>
+                              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Detailed Card Expanded Segment */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div 
+                              initial={{ height: 0 }}
+                              animate={{ height: "auto" }}
+                              exit={{ height: 0 }}
+                              className="border-t border-slate-200 bg-slate-50/70 overflow-hidden font-sans"
+                            >
+                              <div className="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 text-xs font-medium">
+                                
+                                {/* Left details breakdown */}
+                                <div className="lg:col-span-8 space-y-5">
+                                  
+                                  {/* Contact & Venue information grid */}
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    
+                                    {/* Contact Card */}
+                                    <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 shadow-2xs">
+                                      <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
+                                        Client Information
+                                      </span>
+                                      <div>
+                                        <span className="text-slate-400 block text-[10px]">Email Address</span>
+                                        <a href={`mailto:${b.email}`} className="text-slate-800 font-semibold hover:text-indigo-600 transition-colors block">{b.email}</a>
+                                      </div>
+                                      <div>
+                                        <span className="text-slate-400 block text-[10px]">Phone Contact</span>
+                                        <a href={`tel:${cleanPhone}`} className="text-slate-800 font-semibold hover:text-indigo-600 transition-colors block">{b.phone}</a>
+                                      </div>
+                                    </div>
+
+                                    {/* Venue Card */}
+                                    <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 shadow-2xs">
+                                      <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
+                                        Event Locations
+                                      </span>
+                                      <div>
+                                        <span className="text-slate-400 block text-[10px]">Wedding Location</span>
+                                        <span className="text-slate-800 font-semibold block">{b.weddingVenue}</span>
+                                      </div>
+                                      {b.hasEngagement && (
+                                        <div>
+                                          <span className="text-slate-400 block text-[10px]">Engagement Location</span>
+                                          <span className="text-slate-800 font-semibold block">{b.engagementVenue} ({b.engagementDate})</span>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                  </div>
+
+                                  {/* Ceremonies Covered & Upgrades */}
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    
+                                    {/* Ceremony matrix */}
+                                    <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2.5 shadow-2xs">
+                                      <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
+                                        Ceremony Days Coverage
+                                      </span>
+                                      <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                                        {renderCheckSummary(b).map((val, i) => (
+                                          <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200/60 rounded-lg text-slate-700 text-xs">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                            <span>{val}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* Pre-wedding & Deliverables */}
+                                    <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-2xs">
+                                      {/* Prewedding */}
+                                      {[
+                                        b.preWedding.shoot1Photo, b.preWedding.shoot1Video,
+                                        b.preWedding.shoot2Photo, b.preWedding.shoot2Video
+                                      ].some(Boolean) && (
+                                        <div className="space-y-1.5">
+                                          <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block">Pre-Wedding Shoots</span>
+                                          <div className="flex flex-wrap gap-1.5">
+                                            {b.preWedding.shoot1Photo && <span className="px-2 py-0.5 text-[10px] bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded">Session 1 Photo</span>}
+                                            {b.preWedding.shoot1Video && <span className="px-2 py-0.5 text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded">Session 1 Video</span>}
+                                            {b.preWedding.shoot2Photo && <span className="px-2 py-0.5 text-[10px] bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded">Session 2 Photo</span>}
+                                            {b.preWedding.shoot2Video && <span className="px-2 py-0.5 text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded">Session 2 Video</span>}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Deliverables */}
+                                      <div className="space-y-1.5">
+                                        <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block">Deliverables Selected</span>
+                                        <div className="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto pr-1">
+                                          {Object.keys(b.deliverables).filter(k => b.deliverables[k as keyof DeliverableSelection]).map((k) => {
+                                            const labels: Record<string, string> = {
+                                              album1: "Album 1",
+                                              album2: "Album 2",
+                                              highlights1: "Highlights 1",
+                                              highlights2: "Highlights 2",
+                                              documentary: "Full Film",
+                                              reels: "Teaser Reels"
+                                            };
+                                            return (
+                                              <span key={k} className="px-2 py-0.5 text-[10px] bg-slate-100 border border-slate-200 text-slate-800 font-medium rounded">
+                                                {labels[k]}
+                                              </span>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  {/* Additional Upgrades Matrix */}
+                                  {Object.keys(b.additionalServices).some(dayKey => Object.values(b.additionalServices[dayKey]).some(Boolean)) && (
+                                    <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 shadow-2xs">
+                                      <span className="text-[10px] uppercase tracking-wider text-indigo-600 font-bold block border-b border-slate-100 pb-1.5">
+                                        Production Upgrades Matrix
+                                      </span>
+                                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                                        {Object.keys(b.additionalServices).map((dayKey) => {
+                                          const srv = b.additionalServices[dayKey];
+                                          const activeSrvs = [
+                                            srv.helicam && "Drone",
+                                            srv.live && "Live Stream",
+                                            srv.spotEdit && "Spot Edit"
+                                          ].filter(Boolean);
+                                          if (activeSrvs.length === 0) return null;
+                                          return (
+                                            <div key={dayKey} className="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                                              <span className="block text-xs font-bold text-slate-800 capitalize truncate">{getServiceDayLabel(dayKey)}</span>
+                                              <span className="block text-[10px] text-indigo-600 font-semibold">{activeSrvs.join(" / ")}</span>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                </div>
+
+                                {/* Right Client Actions Card */}
+                                <div className="lg:col-span-4 bg-white border border-slate-200 p-5 rounded-xl shadow-2xs flex flex-col justify-between h-auto min-h-[240px]">
+                                  <div>
+                                    <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block border-b border-slate-100 pb-2 mb-3">Enquiry Details</span>
+                                    <div className="mb-4 space-y-1">
+                                      <span className="text-xs font-bold text-slate-800 block">Wedding Style: {b.category}</span>
+                                      <span className="text-[11px] text-slate-500 font-medium block">Received: {new Date(b.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Communications & Share Actions */}
+                                  <div className="space-y-2.5 pt-4 border-t border-slate-100">
+                                    <div className="grid grid-cols-3 gap-2">
+                                      <a 
+                                        href={`tel:${cleanPhone}`} 
+                                        className="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center font-bold text-xs transition-colors"
+                                        title="Call Client"
+                                      >
+                                        <Phone size={14} />
+                                      </a>
+                                      
+                                      <a 
+                                        href={`mailto:${b.email}?subject=Odd_One_Ads%20Wedding%20Booking%20Inquiry`} 
+                                        className="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center font-bold text-xs transition-colors"
+                                        title="Send Email"
+                                      >
+                                        <Mail size={14} />
+                                      </a>
+
+                                      <a 
+                                        href={`https://wa.me/${cleanPhone.replace("+", "")}?text=${encodeURIComponent("Greetings from Odd_One_Ads weddings team. We received your booking request! Let's arrange a call.")}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl flex items-center justify-center font-bold text-xs transition-colors"
+                                        title="WhatsApp Chat"
+                                      >
+                                        <MessageSquare size={14} />
+                                      </a>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <button 
+                                        type="button"
+                                        onClick={() => handleWhatsAppShare(b)}
+                                        className="py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                                      >
+                                        <Share2 size={12} /> Share
+                                      </button>
+
+                                      <button 
+                                        type="button"
+                                        onClick={() => handlePrint(b.id)}
+                                        className="py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                                      >
+                                        <Printer size={12} /> Print
+                                      </button>
+                                    </div>
+
+                                    <button 
+                                      type="button"
+                                      onClick={() => handleDeleteBooking(b.id)}
+                                      className="w-full py-2.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-colors mt-1"
+                                    >
+                                      <Trash2 size={13} /> Delete Entry
+                                    </button>
+                                  </div>
+                                </div>
+
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         )}
+
+        {/* SECTION 2: SIMPLE CONTACT REQUESTS TAB */}
+        {activeTab === "contacts" && (
+          <div>
+            {contacts.length === 0 ? (
+              <div className="bg-white border border-slate-200/80 p-12 text-center rounded-2xl shadow-sm">
+                <Inbox size={44} className="text-slate-300 mx-auto mb-4" />
+                <h4 className="font-serif text-lg font-bold text-slate-800 mb-1">No contact requests found</h4>
+                <p className="text-xs text-slate-500 font-medium max-w-xs mx-auto">Simple inquiry messages submitted via the Contact page will appear here.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
+                <AnimatePresence>
+                  {contacts.map((c) => {
+                    const cleanPhone = c.phone.replace(/[^0-9+]/g, "");
+                    const eventTypeTag = EVENT_TYPE_LABELS[c.eventType] || c.eventType;
+
+                    return (
+                      <motion.div
+                        key={c.id}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.3 }}
+                        className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs hover:shadow-md transition-shadow space-y-4 flex flex-col justify-between"
+                      >
+                        {/* Contact Header */}
+                        <div>
+                          <div className="flex justify-between items-start gap-3 mb-3">
+                            <div>
+                              <h3 className="font-serif text-lg font-bold text-slate-900">{c.fullName}</h3>
+                              <span className="inline-block mt-1 px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                {eventTypeTag}
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                              <Clock size={11} />
+                              {new Date(c.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+
+                          {/* Contact & Location Details */}
+                          <div className="grid grid-cols-2 gap-3 text-xs bg-slate-50 border border-slate-200/70 p-3 rounded-xl mb-4">
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-bold">Email</span>
+                              <a href={`mailto:${c.email}`} className="text-slate-800 font-medium hover:text-indigo-600 truncate block">
+                                {c.email}
+                              </a>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-bold">Phone</span>
+                              <a href={`tel:${cleanPhone}`} className="text-slate-800 font-medium hover:text-indigo-600 block">
+                                {c.phone}
+                              </a>
+                            </div>
+                            {c.eventDate && (
+                              <div>
+                                <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-bold flex items-center gap-1">
+                                  <Calendar size={10} /> Date
+                                </span>
+                                <span className="text-slate-800 font-medium">{c.eventDate}</span>
+                              </div>
+                            )}
+                            {c.eventLocation && (
+                              <div>
+                                <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-bold flex items-center gap-1">
+                                  <MapPin size={10} /> Location
+                                </span>
+                                <span className="text-slate-800 font-medium truncate block">{c.eventLocation}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Client Message */}
+                          <div className="bg-slate-100/60 border-l-2 border-indigo-500 p-3.5 rounded-r-xl text-xs text-slate-700 leading-relaxed font-light italic">
+                            &quot;{c.message}&quot;
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <a
+                              href={`tel:${cleanPhone}`}
+                              className="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition-colors"
+                              title="Call Client"
+                            >
+                              <Phone size={14} />
+                            </a>
+                            <a
+                              href={`mailto:${c.email}?subject=Odd_One_Ads%20Inquiry%20Response`}
+                              className="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition-colors"
+                              title="Send Email"
+                            >
+                              <Mail size={14} />
+                            </a>
+                            <a
+                              href={`https://wa.me/${cleanPhone.replace("+", "")}?text=${encodeURIComponent("Hi! Greetings from Odd_One_Ads. We received your inquiry and would love to chat.")}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-9 h-9 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl flex items-center justify-center transition-colors"
+                              title="WhatsApp Chat"
+                            >
+                              <MessageSquare size={14} />
+                            </a>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteContact(c.id)}
+                            className="px-3 py-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer transition-colors"
+                          >
+                            <Trash2 size={13} /> Delete
+                          </button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   );
