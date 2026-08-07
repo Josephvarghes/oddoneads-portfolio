@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Phone, 
@@ -227,6 +228,23 @@ function ContactPlannerForm({
   handleEventToggle,
   handleServiceToggle
 }: ContactPlannerFormProps) {
+  const router = useRouter();
+  const [redirectCountdown, setRedirectCountdown] = useState<number>(4);
+
+  // Auto-redirect timer to home page when inquiry is successfully submitted
+  useEffect(() => {
+    if (!showSuccess) return;
+    const interval = setInterval(() => {
+      setRedirectCountdown((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [showSuccess]);
+
+  useEffect(() => {
+    if (showSuccess && redirectCountdown <= 0) {
+      router.push("/");
+    }
+  }, [showSuccess, redirectCountdown, router]);
 
   const handleDeliverableToggle = (key: keyof DeliverableSelection) => {
     setDeliverables((prev) => ({
@@ -285,7 +303,7 @@ function ContactPlannerForm({
       return;
     }
     if (!validateStep()) return;
-    if (isSubmitting) return;
+    if (isSubmitting || showSuccess) return;
     
     setIsSubmitting(true);
     // Save booking details to localStorage ONCE
@@ -337,29 +355,31 @@ function ContactPlannerForm({
 
   return (
     <div className="w-full bg-charcoal-900/40 border border-white/[0.04] p-6 md:p-10 relative overflow-hidden rounded-2xl shadow-xl backdrop-blur-xl">
-      {/* Top Progress bar and labels */}
-      <div className="mb-10">
-        <div className="flex justify-between text-[8px] md:text-[10px] uppercase tracking-widest text-charcoal-400 font-bold mb-3 font-sans">
-          {stepLabels.map((lbl, idx) => (
-            <span 
-              key={idx} 
-              className={`transition-colors duration-300 ${
-                step >= idx + 1 ? "text-brand-teal font-extrabold" : "opacity-60"
-              }`}
-            >
-              {lbl}
-            </span>
-          ))}
+      {/* Top Progress bar and labels (Hidden after submission) */}
+      {!showSuccess && (
+        <div className="mb-10">
+          <div className="flex justify-between text-[8px] md:text-[10px] uppercase tracking-widest text-charcoal-400 font-bold mb-3 font-sans">
+            {stepLabels.map((lbl, idx) => (
+              <span 
+                key={idx} 
+                className={`transition-colors duration-300 ${
+                  step >= idx + 1 ? "text-brand-teal font-extrabold" : "opacity-60"
+                }`}
+              >
+                {lbl}
+              </span>
+            ))}
+          </div>
+          <div className="w-full h-1.5 bg-charcoal-950 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-brand-gradient" 
+              initial={{ width: "16.6%" }} 
+              animate={{ width: `${(step / 6) * 100}%` }} 
+              transition={{ duration: 0.5, ease: "easeOut" }} 
+            />
+          </div>
         </div>
-        <div className="w-full h-1.5 bg-charcoal-950 rounded-full overflow-hidden">
-          <motion.div 
-            className="h-full bg-brand-gradient" 
-            initial={{ width: "16.6%" }} 
-            animate={{ width: `${(step / 6) * 100}%` }} 
-            transition={{ duration: 0.5, ease: "easeOut" }} 
-          />
-        </div>
-      </div>
+      )}
 
       {/* Errors warning popup */}
       <AnimatePresence>
@@ -858,33 +878,35 @@ function ContactPlannerForm({
 
         </AnimatePresence>
 
-        {/* Wizard Bottom Navigation Controls */}
-        <div className="flex justify-between pt-6 border-t border-white/[0.04]">
-          {step > 1 ? (
-            <button 
-              type="button" 
-              onClick={handlePrevStep} 
-              className="flex items-center gap-2 px-6 py-3 border border-white/10 hover:border-white/20 text-white text-[10px] uppercase font-bold tracking-widest cursor-pointer hover:bg-white/[0.02] transition-colors rounded-lg font-sans"
-            >
-              <ArrowLeft size={12} />
-              Back
-            </button>
-          ) : (
-            <div />
-          )}
+        {/* Wizard Bottom Navigation Controls (Hidden after submission) */}
+        {!showSuccess && (
+          <div className="flex justify-between pt-6 border-t border-white/[0.04]">
+            {step > 1 ? (
+              <button 
+                type="button" 
+                onClick={handlePrevStep} 
+                className="flex items-center gap-2 px-6 py-3 border border-white/10 hover:border-white/20 text-white text-[10px] uppercase font-bold tracking-widest cursor-pointer hover:bg-white/[0.02] transition-colors rounded-lg font-sans"
+              >
+                <ArrowLeft size={12} />
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
 
-          <button 
-            type="submit" 
-            disabled={isSubmitting} 
-            className="flex items-center gap-2 px-6 py-3 bg-brand-gradient hover:opacity-95 text-charcoal-950 text-[10px] uppercase font-extrabold tracking-widest cursor-pointer transition-opacity rounded-lg shadow-lg shadow-brand-purple/10 font-sans"
-          >
-            {isSubmitting ? "Processing..." : "Next Step"}
-            <ArrowRight size={12} />
-          </button>
-        </div>
+            <button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className="flex items-center gap-2 px-6 py-3 bg-brand-gradient hover:opacity-95 text-charcoal-950 text-[10px] uppercase font-extrabold tracking-widest cursor-pointer transition-opacity rounded-lg shadow-lg shadow-brand-purple/10 font-sans"
+            >
+              {isSubmitting ? "Submitting Enquiry..." : step === 6 ? "Submit Enquiry" : "Next Step"}
+              <ArrowRight size={12} />
+            </button>
+          </div>
+        )}
       </form>
 
-      {/* Success Popup Screen with Custom Confetti animation */}
+      {/* Success Popup Screen with Custom Confetti animation & Auto-Redirect */}
       <AnimatePresence>
         {showSuccess && (
           <motion.div 
@@ -928,6 +950,28 @@ function ContactPlannerForm({
                 <div className="border-t border-white/[0.04] pt-3 text-center">
                   <span className="text-[10px] uppercase tracking-widest text-brand-teal font-extrabold block">Visual Scope Recorded &bull; Directors Reviewing</span>
                 </div>
+              </div>
+
+              {/* Auto-redirect countdown & manual return button */}
+              <div className="bg-charcoal-950/60 border border-white/[0.06] p-4 rounded-xl space-y-3 max-w-xs mx-auto">
+                <p className="text-[10px] text-charcoal-400 font-medium uppercase tracking-wider">
+                  Redirecting to Home in <span className="text-brand-teal font-extrabold text-xs">{redirectCountdown}s</span>
+                </p>
+                <div className="w-full bg-charcoal-950 rounded-full h-1 overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-brand-gradient"
+                    initial={{ width: "100%" }}
+                    animate={{ width: "0%" }}
+                    transition={{ duration: 4, ease: "linear" }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => router.push("/")}
+                  className="w-full py-2.5 bg-brand-gradient hover:opacity-90 text-charcoal-950 text-[10px] uppercase font-extrabold tracking-widest transition-all rounded-lg shadow-lg shadow-brand-purple/10 font-sans cursor-pointer"
+                >
+                  Return to Home Now
+                </button>
               </div>
 
               <p className="text-[10px] text-charcoal-500 italic max-w-xs mx-auto">

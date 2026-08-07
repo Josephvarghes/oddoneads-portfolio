@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MapPin, Calendar, DollarSign, Send, CheckCircle2, MessageSquare } from "lucide-react";
 
 export default function Contact() {
+  const router = useRouter();
   const [formState, setFormState] = useState({
     fullName: "",
     email: "",
@@ -18,9 +20,25 @@ export default function Contact() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [redirectCountdown, setRedirectCountdown] = useState<number>(4);
+
+  useEffect(() => {
+    if (!showSuccess) return;
+    const interval = setInterval(() => {
+      setRedirectCountdown((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [showSuccess]);
+
+  useEffect(() => {
+    if (showSuccess && redirectCountdown <= 0) {
+      router.push("/");
+    }
+  }, [showSuccess, redirectCountdown, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting || showSuccess) return;
     setIsSubmitting(true);
 
     // Save contact inquiry to localStorage
@@ -353,16 +371,30 @@ export default function Contact() {
                       Your Story is in Safe Hands
                     </h4>
                     
-                    <p className="text-xs text-charcoal-400 leading-relaxed font-light mb-8">
+                    <p className="text-xs text-charcoal-400 leading-relaxed font-light mb-6">
                       Thank you for sharing your vision with us. Our coordinator will review your inquiry and contact you via email or phone within 24 hours to schedule a consultation.
                     </p>
 
-                    <button
-                      onClick={() => setShowSuccess(false)}
-                      className="px-8 py-3 border border-white/10 hover:border-brand-teal text-white hover:text-brand-teal text-xs font-semibold uppercase tracking-widest transition-colors cursor-pointer rounded-none"
-                    >
-                      Close
-                    </button>
+                    <div className="w-full bg-charcoal-950/60 border border-white/[0.06] p-4 rounded-xl space-y-3 mb-2">
+                      <p className="text-[10px] text-charcoal-400 font-medium uppercase tracking-wider">
+                        Redirecting to Home in <span className="text-brand-teal font-extrabold text-xs">{redirectCountdown}s</span>
+                      </p>
+                      <div className="w-full bg-charcoal-950 rounded-full h-1 overflow-hidden">
+                        <motion.div 
+                          className="h-full bg-brand-gradient"
+                          initial={{ width: "100%" }}
+                          animate={{ width: "0%" }}
+                          transition={{ duration: 4, ease: "linear" }}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => router.push("/")}
+                        className="w-full py-2.5 bg-brand-gradient hover:opacity-90 text-charcoal-950 text-[10px] uppercase font-extrabold tracking-widest transition-all rounded-lg shadow-lg shadow-brand-purple/10 font-sans cursor-pointer"
+                      >
+                        Return to Home Now
+                      </button>
+                    </div>
                   </motion.div>
                 </motion.div>
               )}
